@@ -1,12 +1,14 @@
 <?xml version='1.0' encoding='utf-8'?>
-<MixxxControllerPreset schemaVersion="1" mixxxVersion="">
+<MixxxControllerPreset schemaVersion="1" mixxxVersion="2.2.0">
     <info>
         <name>Numark DJ2GO2</name>
         <author>jusko</author>
         <description>Very basic controller mappings</description>
     </info>
     <controller id="Numark DJ2GO2">
-        <scriptfiles/>
+        <scriptfiles>
+            <file filename="Numark-DJ2GO2.script.js" functionprefix="NumarkDJ2GO2"/>
+        </scriptfiles>
         <controls>
             <!-- Master controls -->
             <control>
@@ -39,7 +41,49 @@
                     <soft-takeover/>
                 </options>
             </control>
-            <!-- Channel 1 mappings -->
+
+            <!-- PFL Buttons -->
+            <control>
+                <group>[Channel1]</group>
+                <key>NumarkDJ2GO2.headphonesOn</key>
+                <description>Headphones On (Channel 1)</description>
+                <status>0x90</status>
+                <midino>0x1B</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
+            <control>
+                <group>[Channel1]</group>
+                <key>NumarkDJ2GO2.headphonesOff</key>
+                <description>Headphones Off (Channel 1)</description>
+                <status>0x80</status>
+                <midino>0x1B</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
+            <control>
+                <group>[Channel2]</group>
+                <key>NumarkDJ2GO2.headphonesOn</key>
+                <description>Headphones on (Channel 2)</description>
+                <status>0x91</status>
+                <midino>0x1B</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
+            <control>
+                <group>[Channel2]</group>
+                <key>NumarkDJ2GO2.headphonesOff</key>
+                <description>Headphones off (Channel 2)</description>
+                <status>0x81</status>
+                <midino>0x1B</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
+
             <control>
                 <group>[Channel1]</group>
                 <key>pregain</key>
@@ -48,16 +92,6 @@
                 <midino>0x16</midino>
                 <options>
                     <normal/>
-                </options>
-            </control>
-            <control>
-                <group>[Channel1]</group>
-                <key>pfl</key>
-                <description>Headphones (Channel 1)</description>
-                <status>0x90</status>
-                <midino>0x1B</midino>
-                <options>
-                    <switch/>
                 </options>
             </control>
             <control>
@@ -140,16 +174,6 @@
                 <midino>0x16</midino>
                 <options>
                     <normal/>
-                </options>
-            </control>
-            <control>
-                <group>[Channel2]</group>
-                <key>pfl</key>
-                <description>Headphones (Channel 2)</description>
-                <status>0x81</status>
-                <midino>0x1B</midino>
-                <options>
-                    <switch/>
                 </options>
             </control>
             <control>
