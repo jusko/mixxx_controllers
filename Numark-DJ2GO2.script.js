@@ -26,7 +26,7 @@ NumarkDJ2GO2.headphonesOff = function(channel, control, value, status, group) {
 
 // -- Sync --
 NumarkDJ2GO2.syncPressed = function(channel, control, value, status, group) {
-  midi.sendShortMsg(0x90 + channel, 0x02, 0x01);
+  midi.sendShortMsg(0x90 + channel, 0x02, 0x02);
   engine.setValue(group, 'sync_enabled', 1);
 }
 
@@ -37,7 +37,7 @@ NumarkDJ2GO2.syncReleased = function(channel, control, value, status, group) {
 
 // -- Cue --
 NumarkDJ2GO2.cuePressed = function(channel, control, value, status, group) {
-  midi.sendShortMsg(0x90 + channel, 0x01, 0x01);
+  midi.sendShortMsg(0x90 + channel, 0x01, 0x02);
   engine.setValue(group, 'cue_default', 1);
 }
 
