@@ -42,7 +42,50 @@
                 </options>
             </control>
 
-            <!-- PFL Buttons -->
+            <!-- Sync -->
+            <control>
+                <group>[Channel1]</group>
+                <key>NumarkDJ2GO2.syncPressed</key>
+                <description>Sync pressed (Channel 1)</description>
+                <status>0x90</status>
+                <midino>0x02</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
+            <control>
+                <group>[Channel1]</group>
+                <key>NumarkDJ2GO2.syncReleased</key>
+                <description>Sync released (Channel 1)</description>
+                <status>0x80</status>
+                <midino>0x02</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
+
+            <control>
+                <group>[Channel2]</group>
+                <key>NumarkDJ2GO2.syncPressed</key>
+                <description>Sync pressed (Channel 2)</description>
+                <status>0x91</status>
+                <midino>0x02</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
+            <control>
+                <group>[Channel2]</group>
+                <key>NumarkDJ2GO2.syncReleased</key>
+                <description>Sync released (Channel 2)</description>
+                <status>0x81</status>
+                <midino>0x02</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
+
+            <!-- PFL -->
             <control>
                 <group>[Channel1]</group>
                 <key>NumarkDJ2GO2.headphonesOn</key>
@@ -90,26 +133,6 @@
                 <description>Gain (Channel 1)</description>
                 <status>0xB0</status>
                 <midino>0x16</midino>
-                <options>
-                    <normal/>
-                </options>
-            </control>
-            <control>
-                <group>[Channel1]</group>
-                <key>sync_enabled</key>
-                <description>Sync (Channel 1)</description>
-                <status>0x80</status>
-                <midino>0x02</midino>
-                <options>
-                    <normal/>
-                </options>
-            </control>
-            <control>
-                <group>[Channel1]</group>
-                <key>sync_enabled</key>
-                <description>Sync (Channel 1)</description>
-                <status>0x90</status>
-                <midino>0x02</midino>
                 <options>
                     <normal/>
                 </options>
@@ -212,26 +235,6 @@
                 <description>Cue (Channel 2)</description>
                 <status>0x81</status>
                 <midino>0x01</midino>
-                <options>
-                    <normal/>
-                </options>
-            </control>
-            <control>
-                <group>[Channel2]</group>
-                <key>sync_enabled</key>
-                <description>Sync (Channel 2)</description>
-                <status>0x81</status>
-                <midino>0x02</midino>
-                <options>
-                    <normal/>
-                </options>
-            </control>
-            <control>
-                <group>[Channel2]</group>
-                <key>sync_enabled</key>
-                <description>MIDI Learned from 12 messages.</description>
-                <status>0x91</status>
-                <midino>0x02</midino>
                 <options>
                     <normal/>
                 </options>
