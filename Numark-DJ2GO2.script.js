@@ -52,6 +52,20 @@ NumarkDJ2GO2.Deck = function (channel) {
   this.cueButton = new components.CueButton([0x90 + channel, 0x01]);
   this.syncButton = new components.SyncButton([0x90 + channel, 0x02]);
 
+  this.jogWheel = new components.Encoder({
+    midi: [0xB0 + channel, 0x06],
+    key: 'playposition',
+    input: function(channel, control, value) {
+      var tick = NumarkDJ2GO2.shiftMode ? 0.00025  : 0.01;
+      if (value === 0x01) {
+        this.inSetParameter(this.inGetParameter() + tick);
+      }
+      else if (value === 0x7F) {
+        this.inSetParameter(this.inGetParameter() - tick);
+      }
+    }
+  });
+
   this.reconnectComponents(function (component) {
     if (component.group === undefined) {
       component.group = this.currentDeck;
