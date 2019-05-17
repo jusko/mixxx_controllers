@@ -89,6 +89,11 @@ NumarkDJ2GO2.Deck = function (channel) {
 
   this.jogWheel = new NumarkDJ2GO2.JogWheel(channel);
 
+  this.gainLevel = new components.Pot({
+    midi: [0xB0 + channel, 0X16],
+    inKey: 'pregain'
+  });
+
   this.reconnectComponents(function (component) {
     if (component.group === undefined) {
       component.group = this.currentDeck;
