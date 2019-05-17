@@ -15,13 +15,16 @@ NumarkDJ2GO2.shutdown = function (id, debug) {
   midi.sendShortMsg(0x80, 0x1B, 0x01);
   midi.sendShortMsg(0x81, 0x1B, 0x01);
 
-  midi.sendShortMsg(0x90, 0x00, 0x00);
-  midi.sendShortMsg(0x91, 0x00, 0x00);
+  for (var i = 0x00; i <= 0x02; ++i) {
+    midi.sendShortMsg(0x90, i, 0x00);
+    midi.sendShortMsg(0x91, i, 0x00);
+  }
 };
 
 NumarkDJ2GO2.Deck = function (channel) {
   components.Deck.call(this, [channel + 1]);
 
+  this.playButton = new components.PlayButton([0x90 + channel, 0x00]);
   this.cueButton = new components.CueButton([0x90 + channel, 0x01]);
   this.syncButton = new components.SyncButton([0x90 + channel, 0x02]);
 
