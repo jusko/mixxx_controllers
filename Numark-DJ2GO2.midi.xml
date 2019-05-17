@@ -216,6 +216,29 @@
                 </options>
             </control>
 
+            <!-- Browse Button -->
+            <control>
+                <group>[Channel16]</group>
+                <key>NumarkDJ2GO2.shiftModeOn</key>
+                <description>Enter shift mode</description>
+                <status>0x9F</status>
+                <midino>0x06</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
+            <control>
+                <group>[Channel16]</group>
+                <key>NumarkDJ2GO2.shiftModeOff</key>
+                <description>Exit shift mode</description>
+                <status>0x8F</status>
+                <midino>0x06</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
+
+            <!-- Unscripted -->
             <control>
                 <group>[Channel1]</group>
                 <key>pregain</key>
@@ -237,7 +260,7 @@
                     <invert/>
                 </options>
             </control>
-            <!-- Channel 2 mappings -->
+
             <control>
                 <group>[Channel2]</group>
                 <key>pregain</key>

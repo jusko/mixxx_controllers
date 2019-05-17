@@ -1,4 +1,4 @@
-var NumarkDJ2GO2 = {};
+var NumarkDJ2GO2 = new Object;
 
 /**
  * Init
@@ -13,6 +13,7 @@ NumarkDJ2GO2.init = function (id, debug) {
     return (status & 0xF0) === 0x90;
   }
 
+  NumarkDJ2GO2.shiftMode = false;
   NumarkDJ2GO2.leftDeck = new NumarkDJ2GO2.Deck(0);
   NumarkDJ2GO2.rightDeck = new NumarkDJ2GO2.Deck(1);
 };
@@ -28,6 +29,17 @@ NumarkDJ2GO2.shutdown = function (id, debug) {
     midi.sendShortMsg(0x90, i, 0x00);
     midi.sendShortMsg(0x91, i, 0x00);
   }
+};
+
+/*
+ * Enable shift mode while the browse button is held down
+ */
+NumarkDJ2GO2.shiftModeOn = function () {
+  NumarkDJ2GO2.shiftMode = true;
+};
+
+NumarkDJ2GO2.shiftModeOff = function () {
+  NumarkDJ2GO2.shiftMode = false;
 };
 
 /**
