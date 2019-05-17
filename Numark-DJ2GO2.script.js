@@ -1,4 +1,4 @@
-var NumarkDJ2GO2 = {};
+var NumarkDJ2GO2 = new Object;
 
 /**
  * Init
@@ -13,6 +13,7 @@ NumarkDJ2GO2.init = function (id, debug) {
     return (status & 0xF0) === 0x90;
   }
 
+  NumarkDJ2GO2.shiftMode = false;
   NumarkDJ2GO2.leftDeck = new NumarkDJ2GO2.Deck(0);
   NumarkDJ2GO2.rightDeck = new NumarkDJ2GO2.Deck(1);
 };
@@ -30,6 +31,17 @@ NumarkDJ2GO2.shutdown = function (id, debug) {
   }
 };
 
+/*
+ * Enable shift mode while the browse button is held down
+ */
+NumarkDJ2GO2.shiftModeOn = function () {
+  NumarkDJ2GO2.shiftMode = true;
+};
+
+NumarkDJ2GO2.shiftModeOff = function () {
+  NumarkDJ2GO2.shiftMode = false;
+};
+
 /**
  * NumarkDJ2GO.Deck
  */
@@ -39,6 +51,20 @@ NumarkDJ2GO2.Deck = function (channel) {
   this.playButton = new components.PlayButton([0x90 + channel, 0x00]);
   this.cueButton = new components.CueButton([0x90 + channel, 0x01]);
   this.syncButton = new components.SyncButton([0x90 + channel, 0x02]);
+
+  this.jogWheel = new components.Encoder({
+    midi: [0xB0 + channel, 0x06],
+    key: 'playposition',
+    input: function(channel, control, value) {
+      var tick = NumarkDJ2GO2.shiftMode ? 0.00025  : 0.01;
+      if (value === 0x01) {
+        this.inSetParameter(this.inGetParameter() + tick);
+      }
+      else if (value === 0x7F) {
+        this.inSetParameter(this.inGetParameter() - tick);
+      }
+    }
+  });
 
   this.reconnectComponents(function (component) {
     if (component.group === undefined) {
