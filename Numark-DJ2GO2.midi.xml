@@ -7,6 +7,8 @@
     </info>
     <controller id="Numark DJ2GO2">
         <scriptfiles>
+            <file filename="lodash.mixxx.js"/>
+            <file filename="midi-components-0.0.js"/>
             <file filename="Numark-DJ2GO2.script.js" functionprefix="NumarkDJ2GO2"/>
         </scriptfiles>
         <controls>
@@ -45,7 +47,7 @@
             <!-- Sync -->
             <control>
                 <group>[Channel1]</group>
-                <key>NumarkDJ2GO2.syncPressed</key>
+                <key>NumarkDJ2GO2.leftDeck.syncButton.input</key>
                 <description>Sync pressed (Channel 1)</description>
                 <status>0x90</status>
                 <midino>0x02</midino>
@@ -55,7 +57,7 @@
             </control>
             <control>
                 <group>[Channel1]</group>
-                <key>NumarkDJ2GO2.syncReleased</key>
+                <key>NumarkDJ2GO2.leftDeck.syncButton.input</key>
                 <description>Sync released (Channel 1)</description>
                 <status>0x80</status>
                 <midino>0x02</midino>
@@ -66,7 +68,7 @@
 
             <control>
                 <group>[Channel2]</group>
-                <key>NumarkDJ2GO2.syncPressed</key>
+                <key>NumarkDJ2GO2.rightDeck.syncButton.input</key>
                 <description>Sync pressed (Channel 2)</description>
                 <status>0x91</status>
                 <midino>0x02</midino>
@@ -76,7 +78,7 @@
             </control>
             <control>
                 <group>[Channel2]</group>
-                <key>NumarkDJ2GO2.syncReleased</key>
+                <key>NumarkDJ2GO2.rightDeck.syncButton.input</key>
                 <description>Sync released (Channel 2)</description>
                 <status>0x81</status>
                 <midino>0x02</midino>
@@ -88,7 +90,7 @@
             <!-- Cue -->
             <control>
                 <group>[Channel1]</group>
-                <key>NumarkDJ2GO2.cuePressed</key>
+                <key>NumarkDJ2GO2.leftDeck.cueButton.input</key>
                 <description>Cue (Channel 1)</description>
                 <status>0x90</status>
                 <midino>0x01</midino>
@@ -98,7 +100,7 @@
             </control>
             <control>
                 <group>[Channel1]</group>
-                <key>NumarkDJ2GO2.cueReleased</key>
+                <key>NumarkDJ2GO2.leftDeck.cueButton.input</key>
                 <description>Cue (Channel 1)</description>
                 <status>0x80</status>
                 <midino>0x01</midino>
@@ -109,7 +111,7 @@
 
             <control>
                 <group>[Channel2]</group>
-                <key>NumarkDJ2GO2.cuePressed</key>
+                <key>NumarkDJ2GO2.rightDeck.cueButton.input</key>
                 <description>Cue (Channel 2)</description>
                 <status>0x91</status>
                 <midino>0x01</midino>
@@ -119,7 +121,7 @@
             </control>
             <control>
                 <group>[Channel2]</group>
-                <key>NumarkDJ2GO2.cueReleased</key>
+                <key>NumarkDJ2GO2.rightDeck.cueButton.input</key>
                 <description>Cue (Channel 2)</description>
                 <status>0x81</status>
                 <midino>0x01</midino>
@@ -149,6 +151,7 @@
                     <Script-Binding/>
                 </options>
             </control>
+
             <control>
                 <group>[Channel2]</group>
                 <key>NumarkDJ2GO2.headphonesOn</key>
