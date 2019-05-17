@@ -103,3 +103,24 @@ NumarkDJ2GO2.JogWheel.prototype = new components.Encoder({
     }
   }
 });
+
+/**
+ * Jog wheel mapped to a gain level
+ */
+NumarkDJ2GO2.JogWheelGain = function (channel, gain) {
+  components.Pot.call(this);
+
+  this.midi = [0xB0 + channel, 0x06];
+  this.group = '[EqualizerRack1_[Channel' + (channel + 1) + ']_Effect1]';
+  this.inKey = gain;
+}
+NumarkDJ2GO2.JogWheelGain.prototype = new components.Pot({
+  input: function(channel, control, value) {
+    if (value === 0x01) {
+      this.inSetParameter(this.inGetParameter() + 0.005);
+    }
+    else if (value === 0x7F) {
+      this.inSetParameter(this.inGetParameter() - 0.005);
+    }
+  }
+});
