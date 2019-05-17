@@ -15,22 +15,22 @@
             <!-- Master controls -->
             <control>
                 <group>[Master]</group>
-                <key>gain</key>
+                <key>NumarkDJ2GO2.master.level.input</key>
                 <description>Master Gain</description>
                 <status>0xBF</status>
                 <midino>0x0A</midino>
                 <options>
-                    <soft-takeover/>
+                    <Script-Binding/>
                 </options>
             </control>
             <control>
                 <group>[Master]</group>
-                <key>headGain</key>
+                <key>NumarkDJ2GO2.master.cueLevel.input</key>
                 <description>Master Headphone Gain</description>
                 <status>0xBF</status>
                 <midino>0x0C</midino>
                 <options>
-                    <soft-takeover/>
+                    <Script-Binding/>
                 </options>
             </control>
             <control>

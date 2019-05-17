@@ -14,6 +14,7 @@ NumarkDJ2GO2.init = function (id, debug) {
   }
 
   NumarkDJ2GO2.shiftMode = false;
+  NumarkDJ2GO2.master = new NumarkDJ2GO2.Master();
   NumarkDJ2GO2.leftDeck = new NumarkDJ2GO2.Deck(0);
   NumarkDJ2GO2.rightDeck = new NumarkDJ2GO2.Deck(1);
 };
@@ -58,6 +59,23 @@ NumarkDJ2GO2.disableSuperGain = function() {
     NumarkDJ2GO2.rightDeck.jogWheel = new NumarkDJ2GO2.JogWheel(1);
   }
 }
+
+NumarkDJ2GO2.Master = function () {
+  components.ComponentContainer.call(this)
+
+  this.level = new components.Pot({
+    midi: [0xBF, 0X0A],
+    group: '[Master]',
+    inKey: 'gain'
+  });
+
+  this.cueLevel = new components.Pot({
+    midi: [0xBF, 0X0C],
+    group: '[Master]',
+    inKey: 'headGain'
+  });
+};
+NumarkDJ2GO2.Master.prototype = new components.ComponentContainer();
 
 /**
  * NumarkDJ2GO.Deck
