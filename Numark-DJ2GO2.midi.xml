@@ -260,6 +260,28 @@
                 </options>
             </control>
 
+            <!-- Load Buttons -->
+            <control>
+                <group>[Channel16]</group>
+                <key>NumarkDJ2GO2.enableSuperGain</key>
+                <description></description>
+                <status>0x9F</status>
+                <midino>0x02</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
+            <control>
+                <group>[Channel16]</group>
+                <key>NumarkDJ2GO2.disableSuperGain</key>
+                <description></description>
+                <status>0x9F</status>
+                <midino>0x03</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
+
             <!-- Unscripted -->
             <control>
                 <group>[Channel1]</group>

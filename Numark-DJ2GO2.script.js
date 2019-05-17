@@ -43,6 +43,23 @@ NumarkDJ2GO2.shiftModeOff = function () {
 };
 
 /**
+ * Enter/exit "super gain" mode if load buttons pressed in shift mode
+ */
+NumarkDJ2GO2.enableSuperGain = function() {
+  if (NumarkDJ2GO2.shiftMode) {
+    NumarkDJ2GO2.leftDeck.jogWheel = new NumarkDJ2GO2.JogWheelGain(0, 'parameter1');
+    NumarkDJ2GO2.rightDeck.jogWheel = new NumarkDJ2GO2.JogWheelGain(1, 'parameter1');
+  }
+}
+
+NumarkDJ2GO2.disableSuperGain = function() {
+  if (NumarkDJ2GO2.shiftMode) {
+    NumarkDJ2GO2.leftDeck.jogWheel = new NumarkDJ2GO2.JogWheel(0);
+    NumarkDJ2GO2.rightDeck.jogWheel = new NumarkDJ2GO2.JogWheel(1);
+  }
+}
+
+/**
  * NumarkDJ2GO.Deck
  */
 NumarkDJ2GO2.Deck = function (channel) {
