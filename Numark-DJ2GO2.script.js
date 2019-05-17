@@ -52,19 +52,7 @@ NumarkDJ2GO2.Deck = function (channel) {
   this.cueButton = new components.CueButton([0x90 + channel, 0x01]);
   this.syncButton = new components.SyncButton([0x90 + channel, 0x02]);
 
-  this.jogWheel = new components.Encoder({
-    midi: [0xB0 + channel, 0x06],
-    key: 'playposition',
-    input: function(channel, control, value) {
-      var tick = NumarkDJ2GO2.shiftMode ? 0.00025  : 0.01;
-      if (value === 0x01) {
-        this.inSetParameter(this.inGetParameter() + tick);
-      }
-      else if (value === 0x7F) {
-        this.inSetParameter(this.inGetParameter() - tick);
-      }
-    }
-  });
+  this.jogWheel = new NumarkDJ2GO2.JogWheel(channel);
 
   this.reconnectComponents(function (component) {
     if (component.group === undefined) {
@@ -83,9 +71,35 @@ NumarkDJ2GO2.Deck.prototype = new components.Deck('prototype');
 NumarkDJ2GO2.headphonesOn = function(channel, control, value, status, group) {
   midi.sendShortMsg(0x90 + channel, 0x1B, 0x01);
   engine.setValue(group, 'pfl', 1);
-}
+};
 
 NumarkDJ2GO2.headphonesOff = function(channel, control, value, status, group) {
   midi.sendShortMsg(0x80 + channel, 0x1B, 0x01);
   engine.setValue(group, 'pfl', 0);
+};
+
+/**
+ * Custom Components
+ */
+
+
+/**
+ * Standard jog wheel
+ */
+NumarkDJ2GO2.JogWheel = function (channel) {
+  components.Encoder.call(this);
+  this.midi = [0xB0 + channel, 0x06];
+  this.group = '[Channel' + (channel + 1) + ']';
 }
+NumarkDJ2GO2.JogWheel.prototype = new components.Encoder({
+  key: 'playposition',
+  input: function(channel, control, value) {
+    var tick = NumarkDJ2GO2.shiftMode ? 0.00025  : 0.01;
+    if (value === 0x01) {
+      this.inSetParameter(this.inGetParameter() + tick);
+    }
+    else if (value === 0x7F) {
+      this.inSetParameter(this.inGetParameter() - tick);
+    }
+  }
+});
