@@ -1,4 +1,4 @@
-var NumarkDJ2GO2 = new Object;
+var NumarkDJ2GO2 = new Object();
 
 /**
  * Init
@@ -14,9 +14,20 @@ NumarkDJ2GO2.init = function (id, debug) {
   }
 
   NumarkDJ2GO2.shiftMode = false;
-  NumarkDJ2GO2.master = new NumarkDJ2GO2.Master();
-  NumarkDJ2GO2.leftDeck = new NumarkDJ2GO2.Deck(0);
-  NumarkDJ2GO2.rightDeck = new NumarkDJ2GO2.Deck(1);
+
+  NumarkDJ2GO2.setSuperGain = function(on) {
+    if (on) {
+      NumarkDJ2GO2.master = new NumarkDJ2GO2.SuperGainMaster();
+      NumarkDJ2GO2.leftDeck = new NumarkDJ2GO2.SuperGainDeck(0);
+      NumarkDJ2GO2.rightDeck = new NumarkDJ2GO2.SuperGainDeck(1);
+    }
+    else {
+      NumarkDJ2GO2.master = new NumarkDJ2GO2.Master();
+      NumarkDJ2GO2.leftDeck = new NumarkDJ2GO2.Deck(0);
+      NumarkDJ2GO2.rightDeck = new NumarkDJ2GO2.Deck(1);
+    }
+  };
+  NumarkDJ2GO2.setSuperGain(false);
 };
 
 /**
@@ -48,18 +59,19 @@ NumarkDJ2GO2.shiftModeOff = function () {
  */
 NumarkDJ2GO2.enableSuperGain = function() {
   if (NumarkDJ2GO2.shiftMode) {
-    NumarkDJ2GO2.leftDeck.jogWheel = new NumarkDJ2GO2.JogWheelGain(0, 'parameter1');
-    NumarkDJ2GO2.rightDeck.jogWheel = new NumarkDJ2GO2.JogWheelGain(1, 'parameter1');
+    NumarkDJ2GO2.setSuperGain(true);
   }
 }
 
 NumarkDJ2GO2.disableSuperGain = function() {
   if (NumarkDJ2GO2.shiftMode) {
-    NumarkDJ2GO2.leftDeck.jogWheel = new NumarkDJ2GO2.JogWheel(0);
-    NumarkDJ2GO2.rightDeck.jogWheel = new NumarkDJ2GO2.JogWheel(1);
+    NumarkDJ2GO2.setSuperGain(false);
   }
 }
 
+/**
+ * Regular master channel controls
+ */
 NumarkDJ2GO2.Master = function () {
   components.ComponentContainer.call(this)
 
@@ -75,10 +87,29 @@ NumarkDJ2GO2.Master = function () {
     inKey: 'headGain'
   });
 };
-NumarkDJ2GO2.Master.prototype = new components.ComponentContainer();
+NumarkDJ2GO2.Master.prototype = Object.create(components.ComponentContainer.prototype)
+
+/*
+ * Master channel controls transforming master and cue level knobs to mid gain
+ * equalizer knobs for both channels
+ */
+NumarkDJ2GO2.SuperGainMaster = function () {
+  components.ComponentContainer.call(this)
+
+  this.level = new NumarkDJ2GO2.EqGainKnob(0, {
+    midi: [0xBF, 0X0A],
+    inKey: 'parameter2'
+  });
+
+  this.cueLevel = new NumarkDJ2GO2.EqGainKnob(1, {
+    midi: [0xBF, 0X0C],
+    inKey: 'parameter2'
+  });
+};
+NumarkDJ2GO2.SuperGainMaster.prototype = Object.create(components.ComponentContainer.prototype)
 
 /**
- * NumarkDJ2GO.Deck
+ * A deck with the standard controller features
  */
 NumarkDJ2GO2.Deck = function (channel) {
   components.Deck.call(this, [channel + 1]);
@@ -100,7 +131,22 @@ NumarkDJ2GO2.Deck = function (channel) {
     }
   });
 };
-NumarkDJ2GO2.Deck.prototype = new components.Deck('prototype');
+NumarkDJ2GO2.Deck.prototype = Object.create(components.Deck.prototype);
+
+/**
+ * A deck which transforms its jog wheel and gain level knob to low and hi gain
+ * equalizer knobs respectively.
+ */
+NumarkDJ2GO2.SuperGainDeck = function (channel) {
+  NumarkDJ2GO2.Deck.call(this, channel);
+
+  this.jogWheel = new NumarkDJ2GO2.JogWheelGain(channel, 'parameter1');
+  this.gainLevel = new NumarkDJ2GO2.EqGainKnob(channel, {
+    midi: [0xB0 + channel, 0X16],
+    inKey: 'parameter3'
+  });
+};
+NumarkDJ2GO2.SuperGainDeck.prototype = Object.create(NumarkDJ2GO2.Deck.prototype);
 
 /**
  * Headphones/PFL Events 
@@ -122,7 +168,6 @@ NumarkDJ2GO2.headphonesOff = function(channel, control, value, status, group) {
  * Custom Components
  */
 
-
 /**
  * Standard jog wheel
  */
@@ -130,10 +175,8 @@ NumarkDJ2GO2.JogWheel = function (channel) {
   components.Encoder.call(this);
   this.midi = [0xB0 + channel, 0x06];
   this.group = '[Channel' + (channel + 1) + ']';
-}
-NumarkDJ2GO2.JogWheel.prototype = new components.Encoder({
-  key: 'playposition',
-  input: function(channel, control, value) {
+  this.inKey = 'playposition';
+  this.input = function(channel, control, value) {
     var tick = NumarkDJ2GO2.shiftMode ? 0.00025  : 0.01;
     if (value === 0x01) {
       this.inSetParameter(this.inGetParameter() + tick);
@@ -141,26 +184,35 @@ NumarkDJ2GO2.JogWheel.prototype = new components.Encoder({
     else if (value === 0x7F) {
       this.inSetParameter(this.inGetParameter() - tick);
     }
-  }
-});
+  };
+}
+NumarkDJ2GO2.JogWheel.prototype = Object.create(components.Encoder.prototype);
 
 /**
  * Jog wheel mapped to a gain level
  */
 NumarkDJ2GO2.JogWheelGain = function (channel, gain) {
-  components.Pot.call(this);
+  NumarkDJ2GO2.JogWheel.call(this, channel);
 
-  this.midi = [0xB0 + channel, 0x06];
   this.group = '[EqualizerRack1_[Channel' + (channel + 1) + ']_Effect1]';
   this.inKey = gain;
-}
-NumarkDJ2GO2.JogWheelGain.prototype = new components.Pot({
-  input: function(channel, control, value) {
+  this.input = function(channel, control, value) {
     if (value === 0x01) {
       this.inSetParameter(this.inGetParameter() + 0.005);
     }
     else if (value === 0x7F) {
       this.inSetParameter(this.inGetParameter() - 0.005);
     }
-  }
-});
+  };
+}
+NumarkDJ2GO2.JogWheelGain.prototype = Object.create(NumarkDJ2GO2.JogWheel.prototype);
+
+/**
+ * Equalizer gain level knob
+ */
+NumarkDJ2GO2.EqGainKnob = function (channel, options) {
+  components.Pot.call(this, options);
+
+  this.group = '[EqualizerRack1_[Channel' + (channel + 1) + ']_Effect1]';
+}
+NumarkDJ2GO2.EqGainKnob.prototype = Object.create(components.Pot.prototype);
