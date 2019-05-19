@@ -86,6 +86,8 @@ NumarkDJ2GO2.DeckBase.prototype = Object.create(components.Deck.prototype);
  * Standard deck
  */
 NumarkDJ2GO2.StandardDeck = function (channel) {
+  this.slider = new NumarkDJ2GO2.PitchFader(channel);
+
   this.jogWheel = new NumarkDJ2GO2.JogWheel(channel);
 
   this.knob1 = new components.Pot({
@@ -106,6 +108,8 @@ NumarkDJ2GO2.StandardDeck.prototype = Object.create(NumarkDJ2GO2.DeckBase.protot
  * Equalizer deck
  */
 NumarkDJ2GO2.EqualizerDeck = function (channel) {
+  this.slider = new NumarkDJ2GO2.VolumeFader(channel);
+
   this.jogWheel = new NumarkDJ2GO2.JogWheelGain(channel, 'parameter1');
 
   this.knob1 = new NumarkDJ2GO2.EqGainKnob(channel, {
@@ -228,4 +232,34 @@ NumarkDJ2GO2.MultiDeck.prototype = new Object({
   getDeck: function() {
     return this.decks[this.currentDeck];
   }
+});
+
+/**
+ * Base fader class
+ */
+NumarkDJ2GO2.Fader = function(channel) {
+  components.Pot.call(this);
+  this.midi = [0xB0 + channel, 0x09];
+  this.invert = true;
+}
+NumarkDJ2GO2.EqGainKnob.prototype = Object.create(components.Pot.prototype);
+
+/**
+ * Pitch fader
+ */
+NumarkDJ2GO2.PitchFader = function(channel) {
+  NumarkDJ2GO2.Fader.call(this);
+}
+NumarkDJ2GO2.PitchFader.prototype = new components.Pot({
+  inKey: 'rate'
+});
+
+/**
+ * Volume fader
+ */
+NumarkDJ2GO2.VolumeFader = function(channel) {
+  NumarkDJ2GO2.Fader.call(this);
+}
+NumarkDJ2GO2.VolumeFader.prototype = new components.Pot({
+  inKey: 'volume'
 });
