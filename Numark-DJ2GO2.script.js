@@ -14,16 +14,17 @@ NumarkDJ2GO2.init = function (id, debug) {
   }
 
   /**
-   * For whatever reason this refuses to work when the EqGainKnob (or even just
-   * plain Pot components) connect for the first time in the Deck constructors
-   * (but only in init(), not when swapping a deck for the first time). Remove
-   * after implementing serato_sysex
-  */
-  engine.softTakeover('[Master]', 'gain', true);
-  engine.softTakeover('[Master]', 'headGain', true);
-  engine.softTakeover('[Channel1]', 'pregain', true);
-  engine.softTakeover('[Channel2]', 'pregain', true);
+   * Override Pot's connect and disconnect methods to work more smoothly with
+   * the way MultiDeck hot swaps components when toggling decks
+   */
+  components.Pot.prototype.connect = function() {
+      engine.softTakeover(this.group, this.inKey, true);
+  }
+  components.Pot.prototype.disconnect = function() {
+    engine.softTakeoverIgnoreNextValue(this.group, this.inKey);
+  }
 
+  /** Setup the controller */
   NumarkDJ2GO2.shiftMode = false;
   NumarkDJ2GO2.decks = [
     new NumarkDJ2GO2.MultiDeck(0),
@@ -85,6 +86,8 @@ NumarkDJ2GO2.DeckBase.prototype = Object.create(components.Deck.prototype);
  * Standard deck
  */
 NumarkDJ2GO2.StandardDeck = function (channel) {
+  this.slider = new NumarkDJ2GO2.PitchFader(channel);
+
   this.jogWheel = new NumarkDJ2GO2.JogWheel(channel);
 
   this.knob1 = new components.Pot({
@@ -105,6 +108,8 @@ NumarkDJ2GO2.StandardDeck.prototype = Object.create(NumarkDJ2GO2.DeckBase.protot
  * Equalizer deck
  */
 NumarkDJ2GO2.EqualizerDeck = function (channel) {
+  this.slider = new NumarkDJ2GO2.VolumeFader(channel);
+
   this.jogWheel = new NumarkDJ2GO2.JogWheelGain(channel, 'parameter1');
 
   this.knob1 = new NumarkDJ2GO2.EqGainKnob(channel, {
@@ -142,7 +147,6 @@ NumarkDJ2GO2.headphonesOff = function(channel, control, value, status, group) {
 NumarkDJ2GO2.JogWheel = function (channel) {
   components.Encoder.call(this);
   this.midi = [0xB0 + channel, 0x06];
-  this.group = '[Channel' + (channel + 1) + ']';
 }
 NumarkDJ2GO2.JogWheel.prototype = new components.Encoder({
   inKey: 'playposition',
@@ -186,19 +190,7 @@ NumarkDJ2GO2.EqGainKnob = function (channel, options) {
 
   this.group = '[EqualizerRack1_[Channel' + (channel + 1) + ']_Effect1]';
 }
-/**
- * These are override because there's some funky code going on in Pot's default
- * connect methods (go look, it checks a variable, this.relative, which doesn't 
- * even exist anywhere). This works.
- */
-NumarkDJ2GO2.EqGainKnob.prototype = new components.Pot({
-  connect: function() {
-    engine.softTakeover(this.group, this.inKey, true);
-  },
-  disconnect: function() {
-    engine.softTakeoverIgnoreNextValue(this.group, this.inKey);
-  }
-});
+NumarkDJ2GO2.EqGainKnob.prototype = Object.create(components.Pot.prototype);
 
 /**
  * Load button
@@ -240,4 +232,34 @@ NumarkDJ2GO2.MultiDeck.prototype = new Object({
   getDeck: function() {
     return this.decks[this.currentDeck];
   }
+});
+
+/**
+ * Base fader class
+ */
+NumarkDJ2GO2.Fader = function(channel) {
+  components.Pot.call(this);
+  this.midi = [0xB0 + channel, 0x09];
+  this.invert = true;
+}
+NumarkDJ2GO2.EqGainKnob.prototype = Object.create(components.Pot.prototype);
+
+/**
+ * Pitch fader
+ */
+NumarkDJ2GO2.PitchFader = function(channel) {
+  NumarkDJ2GO2.Fader.call(this);
+}
+NumarkDJ2GO2.PitchFader.prototype = new components.Pot({
+  inKey: 'rate'
+});
+
+/**
+ * Volume fader
+ */
+NumarkDJ2GO2.VolumeFader = function(channel) {
+  NumarkDJ2GO2.Fader.call(this);
+}
+NumarkDJ2GO2.VolumeFader.prototype = new components.Pot({
+  inKey: 'volume'
 });
