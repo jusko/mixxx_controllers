@@ -15,22 +15,22 @@
             <!-- Master controls -->
             <control>
                 <group>[Master]</group>
-                <key>gain</key>
+                <key>NumarkDJ2GO2.leftDeck.knob1.input</key>
                 <description>Master Gain</description>
                 <status>0xBF</status>
                 <midino>0x0A</midino>
                 <options>
-                    <soft-takeover/>
+                    <Script-Binding/>
                 </options>
             </control>
             <control>
                 <group>[Master]</group>
-                <key>headGain</key>
+                <key>NumarkDJ2GO2.rightDeck.knob1.input</key>
                 <description>Master Headphone Gain</description>
                 <status>0xBF</status>
                 <midino>0x0C</midino>
                 <options>
-                    <soft-takeover/>
+                    <Script-Binding/>
                 </options>
             </control>
             <control>
@@ -260,17 +260,52 @@
                 </options>
             </control>
 
-            <!-- Unscripted -->
+            <!-- Load Buttons -->
+            <control>
+                <group>[Channel16]</group>
+                <key>NumarkDJ2GO2.leftDeck.loadButton.input</key>
+                <description></description>
+                <status>0x9F</status>
+                <midino>0x02</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
+            <control>
+                <group>[Channel16]</group>
+                <key>NumarkDJ2GO2.rightDeck.loadButton.input</key>
+                <description></description>
+                <status>0x9F</status>
+                <midino>0x03</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
+
+            <!-- Channel Gain Knobs -->
             <control>
                 <group>[Channel1]</group>
-                <key>pregain</key>
+                <key>NumarkDJ2GO2.leftDeck.knob2.input</key>
                 <description>Gain (Channel 1)</description>
                 <status>0xB0</status>
                 <midino>0x16</midino>
                 <options>
-                    <normal/>
+                    <Script-Binding/>
                 </options>
             </control>
+
+            <control>
+                <group>[Channel2]</group>
+                <key>NumarkDJ2GO2.rightDeck.knob2.input</key>
+                <description>Gain (Channel 2)</description>
+                <status>0xB1</status>
+                <midino>0x16</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
+
+            <!-- Channel Pitch Faders -->
             <control>
                 <group>[Channel1]</group>
                 <key>rate</key>
@@ -283,16 +318,6 @@
                 </options>
             </control>
 
-            <control>
-                <group>[Channel2]</group>
-                <key>pregain</key>
-                <description>Gain (Channel 2)</description>
-                <status>0xB1</status>
-                <midino>0x16</midino>
-                <options>
-                    <normal/>
-                </options>
-            </control>
             <control>
                 <group>[Channel2]</group>
                 <key>rate</key>
