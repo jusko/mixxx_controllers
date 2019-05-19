@@ -143,7 +143,6 @@ NumarkDJ2GO2.headphonesOff = function(channel, control, value, status, group) {
 NumarkDJ2GO2.JogWheel = function (channel) {
   components.Encoder.call(this);
   this.midi = [0xB0 + channel, 0x06];
-  this.group = '[Channel' + (channel + 1) + ']';
 }
 NumarkDJ2GO2.JogWheel.prototype = new components.Encoder({
   inKey: 'playposition',
