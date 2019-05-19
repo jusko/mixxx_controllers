@@ -15,7 +15,7 @@
             <!-- Master controls -->
             <control>
                 <group>[Master]</group>
-                <key>NumarkDJ2GO2.master.level.input</key>
+                <key>NumarkDJ2GO2.leftDeck.knob1.input</key>
                 <description>Master Gain</description>
                 <status>0xBF</status>
                 <midino>0x0A</midino>
@@ -25,7 +25,7 @@
             </control>
             <control>
                 <group>[Master]</group>
-                <key>NumarkDJ2GO2.master.cueLevel.input</key>
+                <key>NumarkDJ2GO2.rightDeck.knob1.input</key>
                 <description>Master Headphone Gain</description>
                 <status>0xBF</status>
                 <midino>0x0C</midino>
@@ -263,7 +263,7 @@
             <!-- Load Buttons -->
             <control>
                 <group>[Channel16]</group>
-                <key>NumarkDJ2GO2.enableSuperGain</key>
+                <key>NumarkDJ2GO2.leftDeck.loadButton.input</key>
                 <description></description>
                 <status>0x9F</status>
                 <midino>0x02</midino>
@@ -273,7 +273,7 @@
             </control>
             <control>
                 <group>[Channel16]</group>
-                <key>NumarkDJ2GO2.disableSuperGain</key>
+                <key>NumarkDJ2GO2.rightDeck.loadButton.input</key>
                 <description></description>
                 <status>0x9F</status>
                 <midino>0x03</midino>
@@ -285,7 +285,7 @@
             <!-- Channel Gain Knobs -->
             <control>
                 <group>[Channel1]</group>
-                <key>NumarkDJ2GO2.leftDeck.gainLevel.input</key>
+                <key>NumarkDJ2GO2.leftDeck.knob2.input</key>
                 <description>Gain (Channel 1)</description>
                 <status>0xB0</status>
                 <midino>0x16</midino>
@@ -296,7 +296,7 @@
 
             <control>
                 <group>[Channel2]</group>
-                <key>NumarkDJ2GO2.rightDeck.gainLevel.input</key>
+                <key>NumarkDJ2GO2.rightDeck.knob2.input</key>
                 <description>Gain (Channel 2)</description>
                 <status>0xB1</status>
                 <midino>0x16</midino>
