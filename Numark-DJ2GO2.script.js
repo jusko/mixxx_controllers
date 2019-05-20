@@ -74,7 +74,6 @@ NumarkDJ2GO2.DeckBase = function (channel) {
   this.playButton = new components.PlayButton([0x90 + channel, 0x00]);
   this.cueButton = new components.CueButton([0x90 + channel, 0x01]);
   this.syncButton = new components.SyncButton([0x90 + channel, 0x02]);
-  this.loadButton = new NumarkDJ2GO2.LoadButton([0x9F, 0x02 - channel]);
   this.hotcues = new NumarkDJ2GO2.HotcueButtonPad(channel);
   this.autoloops = new NumarkDJ2GO2.AutoLoopButtonPad(channel);
   this.loops = new NumarkDJ2GO2.ManualLoopButtonPad(channel);
@@ -138,13 +137,25 @@ NumarkDJ2GO2.EqualizerDeck.prototype = Object.create(NumarkDJ2GO2.DeckBase.proto
  * to handle them individually without components.
  */
 NumarkDJ2GO2.headphonesOn = function(channel, control, value, status, group) {
-  midi.sendShortMsg(0x90 + channel, 0x1B, 0x01);
-  engine.setValue(group, 'pfl', 1);
+  if (NumarkDJ2GO2.shiftMode) {
+    NumarkDJ2GO2.decks[0 + channel].toggle();
+    NumarkDJ2GO2.setDecks();
+  }
+  else {
+    midi.sendShortMsg(0x90 + channel, 0x1B, 0x01);
+    engine.setValue(group, 'pfl', 1);
+  }
 };
 
 NumarkDJ2GO2.headphonesOff = function(channel, control, value, status, group) {
-  midi.sendShortMsg(0x80 + channel, 0x1B, 0x01);
-  engine.setValue(group, 'pfl', 0);
+  if (NumarkDJ2GO2.shiftMode) {
+    NumarkDJ2GO2.decks[0 + channel].toggle();
+    NumarkDJ2GO2.setDecks();
+  }
+  else {
+    midi.sendShortMsg(0x80 + channel, 0x1B, 0x01);
+    engine.setValue(group, 'pfl', 0);
+  }
 };
 
 /**
@@ -197,24 +208,6 @@ NumarkDJ2GO2.EqGainKnob = function (channel, options) {
   this.group = '[EqualizerRack1_[Channel' + (channel + 1) + ']_Effect1]';
 }
 NumarkDJ2GO2.EqGainKnob.prototype = Object.create(components.Pot.prototype);
-
-/**
- * Load button
- */
-NumarkDJ2GO2.LoadButton = function(channel, midi) {
-  components.Button.call(this);
-  this.channel = channel;
-  this.midi = midi;
-  this.group = NumarkDJ2GO2.channels[channel];
-}
-NumarkDJ2GO2.LoadButton.prototype = new components.Button({
-  input: function(__channel, control) {
-    if (NumarkDJ2GO2.shiftMode) {
-      NumarkDJ2GO2.decks[control - 0x02].toggle();
-      NumarkDJ2GO2.setDecks();
-    }
-  }
-});
 
 /**
  * Simple deck container to track toggling between single instances of
