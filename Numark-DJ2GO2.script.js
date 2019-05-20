@@ -57,10 +57,12 @@ NumarkDJ2GO2.shutdown = function (id, debug) {
  */
 NumarkDJ2GO2.shiftModeOn = function () {
   NumarkDJ2GO2.shiftMode = true;
+  NumarkDJ2GO2.leftDeck.hotcues.shift();
 };
 
 NumarkDJ2GO2.shiftModeOff = function () {
   NumarkDJ2GO2.shiftMode = false;
+  NumarkDJ2GO2.leftDeck.hotcues.unshift();
 };
 
 /**
