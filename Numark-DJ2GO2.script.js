@@ -307,7 +307,6 @@ NumarkDJ2GO2.AutoLoopButtonPad = function(channel) {
 
     return new components.Button({
       midi: [0x94 + channel, 0x10 + number],
-      number: number,
       group: NumarkDJ2GO2.channels[channel],
       inKey: 'beatloop_' + beats + '_toggle',
       outKey: 'beatloop_' + beats + '_enabled'
