@@ -140,25 +140,13 @@ NumarkDJ2GO2.EqualizerDeck.prototype = Object.create(NumarkDJ2GO2.DeckBase.proto
  * to handle them individually without components.
  */
 NumarkDJ2GO2.headphonesOn = function(channel, control, value, status, group) {
-  if (NumarkDJ2GO2.shiftMode) {
-    NumarkDJ2GO2.decks[0 + channel].toggle();
-    NumarkDJ2GO2.setDecks();
-  }
-  else {
-    midi.sendShortMsg(0x90 + channel, 0x1B, 0x01);
-    engine.setValue(group, 'pfl', 1);
-  }
+  midi.sendShortMsg(0x90 + channel, 0x1B, 0x01);
+  engine.setValue(group, 'pfl', 1);
 };
 
 NumarkDJ2GO2.headphonesOff = function(channel, control, value, status, group) {
-  if (NumarkDJ2GO2.shiftMode) {
-    NumarkDJ2GO2.decks[0 + channel].toggle();
-    NumarkDJ2GO2.setDecks();
-  }
-  else {
-    midi.sendShortMsg(0x80 + channel, 0x1B, 0x01);
-    engine.setValue(group, 'pfl', 0);
-  }
+  midi.sendShortMsg(0x80 + channel, 0x1B, 0x01);
+  engine.setValue(group, 'pfl', 0);
 };
 
 /**
@@ -370,27 +358,26 @@ NumarkDJ2GO2.Browser = function() {
       }
     }
   });
-  this.loadButton1 = new NumarkDJ2GO2.LoadButton(0, 'MoveLeft');
-  this.loadButton2 = new NumarkDJ2GO2.LoadButton(1, 'MoveRight');
+  this.loadButton1 = new NumarkDJ2GO2.LoadButton(0);
+  this.loadButton2 = new NumarkDJ2GO2.LoadButton(1);
 }
 NumarkDJ2GO2.Browser.prototype = Object.create(components.ComponentContainer.prototype);
 
 /**
  * Load buttons for for browsing and loading tracks
  */
-NumarkDJ2GO2.LoadButton = function(channel, key) {
+NumarkDJ2GO2.LoadButton = function(channel) {
   components.Button.call(this);
   this.channel = channel;
-  this.key = key;
   this.midi = [0x9F, 0x02 + channel];
 }
 NumarkDJ2GO2.LoadButton.prototype = new components.Button({
   shift: function() {
-    this.group = NumarkDJ2GO2.channels[this.channel];
-    this.inKey = 'LoadSelectedTrack';
+    NumarkDJ2GO2.decks[0 + this.channel].toggle();
+    NumarkDJ2GO2.setDecks();
   },
   unshift: function() {
-    this.group = '[Library]';
-    this.inKey = this.key;
+    this.group = NumarkDJ2GO2.channels[this.channel];
+    this.inKey = 'LoadSelectedTrack';
   }
 });
