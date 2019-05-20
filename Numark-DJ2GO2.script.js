@@ -45,8 +45,10 @@ NumarkDJ2GO2.shutdown = function (id, debug) {
     midi.sendShortMsg(0x91, i, 0x00);
   }
   for (var i = 0x01; i <= 0x04; ++i) {
-    midi.sendShortMsg(0x94, i, 0x00);
-    midi.sendShortMsg(0x95, i, 0x00);
+    for (var j = 0x00; j <= 0x30; j += 0x10) {
+      midi.sendShortMsg(0x94, j + i, 0x00);
+      midi.sendShortMsg(0x95, j + i, 0x00);
+    }
   }
 };
 
@@ -71,7 +73,8 @@ NumarkDJ2GO2.DeckBase = function (channel) {
   this.cueButton = new components.CueButton([0x90 + channel, 0x01]);
   this.syncButton = new components.SyncButton([0x90 + channel, 0x02]);
   this.loadButton = new NumarkDJ2GO2.LoadButton([0x9F, 0x02 - channel]);
-  this.buttonPad = new NumarkDJ2GO2.MultiPad(channel);
+  this.hotcues = new NumarkDJ2GO2.HotcueButtonPad(channel);
+  this.autoloops = new NumarkDJ2GO2.AutoLoopButtonPad(channel);
 
   this.reconnectComponents(function (component) {
     if (component.group === undefined) {
@@ -266,17 +269,6 @@ NumarkDJ2GO2.VolumeFader.prototype = new components.Pot({
 });
 
 /**
- * Implements a way to toggle between pad button functions
- */
-NumarkDJ2GO2.MultiPad = function(channel) {
-  this.padMode = 0;
-  this.pads = [
-    new NumarkDJ2GO2.HotcueButtonPad(channel)
-  ];
-  this.buttons = this.pads[0].buttons;
-}
-
-/**
  * Base button pad class
  */
 NumarkDJ2GO2.ButtonPad = function(channel, createButtonFn) {
@@ -296,10 +288,28 @@ NumarkDJ2GO2.ButtonPad.prototype = Object.create(components.ComponentContainer.p
 NumarkDJ2GO2.HotcueButtonPad = function(channel) {
   NumarkDJ2GO2.ButtonPad.call(this, channel, function(channel, number) {
     return new components.HotcueButton({
-      midi: [0x94 + channel, number],
+      midi: [0x94 + channel, 0x00 + number],
       number: number,
       group: NumarkDJ2GO2.channels[channel]
     });
   });
 }
 NumarkDJ2GO2.HotcueButtonPad.prototype = Object.create(NumarkDJ2GO2.ButtonPad.prototype);
+
+/**
+ * Auto loop buttons
+ */
+NumarkDJ2GO2.AutoLoopButtonPad = function(channel) {
+  NumarkDJ2GO2.ButtonPad.call(this, channel, function(channel, number) {
+    var beats = (number === 3) ? 4 : ((number === 4) ? 8 : number)
+
+    return new components.Button({
+      midi: [0x94 + channel, 0x10 + number],
+      number: number,
+      group: NumarkDJ2GO2.channels[channel],
+      inKey: 'beatloop_' + beats + '_toggle',
+      outKey: 'beatloop_' + beats + '_enabled'
+    });
+  });
+}
+NumarkDJ2GO2.AutoLoopButtonPad.prototype = Object.create(NumarkDJ2GO2.ButtonPad.prototype);
