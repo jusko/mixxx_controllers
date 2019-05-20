@@ -494,16 +494,6 @@
                 </options>
             </control>
             <control>
-                <group>[Channel1]</group>
-                <key>NumarkDJ2GO2.leftDeck.autoloops.buttons[3].input</key>
-                <description>Autoloop Button 4</description>
-                <status>0x84</status>
-                <midino>0x14</midino>
-                <options>
-                    <Script-Binding/>
-                </options>
-            </control>
-            <control>
                 <group>[Channel2]</group>
                 <key>NumarkDJ2GO2.rightDeck.autoloops.buttons[3].input</key>
                 <description>Autoloop Button 4</description>
@@ -513,12 +503,85 @@
                     <Script-Binding/>
                 </options>
             </control>
+
+            <!-- Manual Loop Pads -->
+            <control>
+                <group>[Channel1]</group>
+                <key>NumarkDJ2GO2.leftDeck.loops.button1.input</key>
+                <description>Loop in</description>
+                <status>0x94</status>
+                <midino>0x21</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
+            <control>
+                <group>[Channel1]</group>
+                <key>NumarkDJ2GO2.leftDeck.loops.button2.input</key>
+                <description>Loop out</description>
+                <status>0x94</status>
+                <midino>0x22</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
+            <control>
+                <group>[Channel1]</group>
+                <key>NumarkDJ2GO2.leftDeck.loops.button3.input</key>
+                <description>Toggle loop</description>
+                <status>0x94</status>
+                <midino>0x23</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
+            <control>
+                <group>[Channel1]</group>
+                <key>NumarkDJ2GO2.leftDeck.loops.button4.input</key>
+                <description>Goto loop in</description>
+                <status>0x94</status>
+                <midino>0x24</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
+
             <control>
                 <group>[Channel2]</group>
-                <key>NumarkDJ2GO2.rightDeck.autoloops.buttons[3].input</key>
-                <description>Autoloop Button 4</description>
-                <status>0x85</status>
-                <midino>0x14</midino>
+                <key>NumarkDJ2GO2.rightDeck.loops.button1.input</key>
+                <description>Loop in</description>
+                <status>0x95</status>
+                <midino>0x21</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
+            <control>
+                <group>[Channel2]</group>
+                <key>NumarkDJ2GO2.rightDeck.loops.button2.input</key>
+                <description>Loop out</description>
+                <status>0x95</status>
+                <midino>0x22</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
+            <control>
+                <group>[Channel2]</group>
+                <key>NumarkDJ2GO2.rightDeck.loops.button3.input</key>
+                <description>Toggle loop</description>
+                <status>0x95</status>
+                <midino>0x23</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
+            <control>
+                <group>[Channel1]</group>
+                <key>NumarkDJ2GO2.rightDeck.loops.button4.input</key>
+                <description>Goto loop in</description>
+                <status>0x95</status>
+                <midino>0x24</midino>
                 <options>
                     <Script-Binding/>
                 </options>
