@@ -340,30 +340,10 @@
                 </options>
             </control>
             <control>
-                <group>[Channel1]</group>
-                <key>NumarkDJ2GO2.leftDeck.hotcues.buttons[0].input</key>
-                <description>Hotcue Button 1</description>
-                <status>0x84</status>
-                <midino>0x01</midino>
-                <options>
-                    <Script-Binding/>
-                </options>
-            </control>
-            <control>
                 <group>[Channel2]</group>
                 <key>NumarkDJ2GO2.rightDeck.hotcues.buttons[0].input</key>
                 <description>Hotcue Button 1</description>
                 <status>0x95</status>
-                <midino>0x01</midino>
-                <options>
-                    <Script-Binding/>
-                </options>
-            </control>
-            <control>
-                <group>[Channel2]</group>
-                <key>NumarkDJ2GO2.rightDeck.hotcues.buttons[0].input</key>
-                <description>Hotcue Button 1</description>
-                <status>0x85</status>
                 <midino>0x01</midino>
                 <options>
                     <Script-Binding/>
@@ -382,30 +362,10 @@
                 </options>
             </control>
             <control>
-                <group>[Channel1]</group>
-                <key>NumarkDJ2GO2.leftDeck.hotcues.buttons[1].input</key>
-                <description>Hotcue Button 2</description>
-                <status>0x84</status>
-                <midino>0x02</midino>
-                <options>
-                    <Script-Binding/>
-                </options>
-            </control>
-            <control>
                 <group>[Channel2]</group>
                 <key>NumarkDJ2GO2.rightDeck.hotcues.buttons[1].input</key>
                 <description>Hotcue Button 2</description>
                 <status>0x95</status>
-                <midino>0x02</midino>
-                <options>
-                    <Script-Binding/>
-                </options>
-            </control>
-            <control>
-                <group>[Channel2]</group>
-                <key>NumarkDJ2GO2.rightDeck.hotcues.buttons[1].input</key>
-                <description>Hotcue Button 2</description>
-                <status>0x85</status>
                 <midino>0x02</midino>
                 <options>
                     <Script-Binding/>
@@ -424,30 +384,10 @@
                 </options>
             </control>
             <control>
-                <group>[Channel1]</group>
-                <key>NumarkDJ2GO2.leftDeck.hotcues.buttons[2].input</key>
-                <description>Hotcue Button 3</description>
-                <status>0x84</status>
-                <midino>0x03</midino>
-                <options>
-                    <Script-Binding/>
-                </options>
-            </control>
-            <control>
                 <group>[Channel2]</group>
                 <key>NumarkDJ2GO2.rightDeck.hotcues.buttons[2].input</key>
                 <description>Hotcue Button 3</description>
                 <status>0x95</status>
-                <midino>0x03</midino>
-                <options>
-                    <Script-Binding/>
-                </options>
-            </control>
-            <control>
-                <group>[Channel2]</group>
-                <key>NumarkDJ2GO2.rightDeck.hotcues.buttons[2].input</key>
-                <description>Hotcue Button 3</description>
-                <status>0x85</status>
                 <midino>0x03</midino>
                 <options>
                     <Script-Binding/>
@@ -466,30 +406,10 @@
                 </options>
             </control>
             <control>
-                <group>[Channel1]</group>
-                <key>NumarkDJ2GO2.leftDeck.hotcues.buttons[3].input</key>
-                <description>Hotcue Button 4</description>
-                <status>0x84</status>
-                <midino>0x04</midino>
-                <options>
-                    <Script-Binding/>
-                </options>
-            </control>
-            <control>
                 <group>[Channel2]</group>
                 <key>NumarkDJ2GO2.rightDeck.hotcues.buttons[3].input</key>
                 <description>Hotcue Button 4</description>
                 <status>0x95</status>
-                <midino>0x04</midino>
-                <options>
-                    <Script-Binding/>
-                </options>
-            </control>
-            <control>
-                <group>[Channel2]</group>
-                <key>NumarkDJ2GO2.rightDeck.hotcues.buttons[3].input</key>
-                <description>Hotcue Button 4</description>
-                <status>0x85</status>
                 <midino>0x04</midino>
                 <options>
                     <Script-Binding/>
@@ -508,30 +428,10 @@
                 </options>
             </control>
             <control>
-                <group>[Channel1]</group>
-                <key>NumarkDJ2GO2.leftDeck.autoloops.buttons[0].input</key>
-                <description>Autoloop Button 1</description>
-                <status>0x84</status>
-                <midino>0x11</midino>
-                <options>
-                    <Script-Binding/>
-                </options>
-            </control>
-            <control>
                 <group>[Channel2]</group>
                 <key>NumarkDJ2GO2.rightDeck.autoloops.buttons[0].input</key>
                 <description>Autoloop Button 1</description>
                 <status>0x95</status>
-                <midino>0x11</midino>
-                <options>
-                    <Script-Binding/>
-                </options>
-            </control>
-            <control>
-                <group>[Channel2]</group>
-                <key>NumarkDJ2GO2.rightDeck.autoloops.buttons[0].input</key>
-                <description>Autoloop Button 1</description>
-                <status>0x85</status>
                 <midino>0x11</midino>
                 <options>
                     <Script-Binding/>
@@ -550,30 +450,10 @@
                 </options>
             </control>
             <control>
-                <group>[Channel1]</group>
-                <key>NumarkDJ2GO2.leftDeck.autoloops.buttons[1].input</key>
-                <description>Autoloop Button 2</description>
-                <status>0x84</status>
-                <midino>0x12</midino>
-                <options>
-                    <Script-Binding/>
-                </options>
-            </control>
-            <control>
                 <group>[Channel2]</group>
                 <key>NumarkDJ2GO2.rightDeck.autoloops.buttons[1].input</key>
                 <description>Autoloop Button 2</description>
                 <status>0x95</status>
-                <midino>0x12</midino>
-                <options>
-                    <Script-Binding/>
-                </options>
-            </control>
-            <control>
-                <group>[Channel2]</group>
-                <key>NumarkDJ2GO2.rightDeck.autoloops.buttons[1].input</key>
-                <description>Autoloop Button 2</description>
-                <status>0x85</status>
                 <midino>0x12</midino>
                 <options>
                     <Script-Binding/>
@@ -592,30 +472,10 @@
                 </options>
             </control>
             <control>
-                <group>[Channel1]</group>
-                <key>NumarkDJ2GO2.leftDeck.autoloops.buttons[2].input</key>
-                <description>Autoloop Button 3</description>
-                <status>0x84</status>
-                <midino>0x13</midino>
-                <options>
-                    <Script-Binding/>
-                </options>
-            </control>
-            <control>
                 <group>[Channel2]</group>
                 <key>NumarkDJ2GO2.rightDeck.autoloops.buttons[2].input</key>
                 <description>Autoloop Button 3</description>
                 <status>0x95</status>
-                <midino>0x13</midino>
-                <options>
-                    <Script-Binding/>
-                </options>
-            </control>
-            <control>
-                <group>[Channel2]</group>
-                <key>NumarkDJ2GO2.rightDeck.autoloops.buttons[2].input</key>
-                <description>Autoloop Button 3</description>
-                <status>0x85</status>
                 <midino>0x13</midino>
                 <options>
                     <Script-Binding/>
