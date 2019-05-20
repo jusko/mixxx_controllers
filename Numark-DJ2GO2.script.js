@@ -76,7 +76,7 @@ NumarkDJ2GO2.DeckBase = function (channel) {
 
   this.reconnectComponents(function (component) {
     if (component.group === undefined) {
-      component.group = this.currentDeck;
+      component.group = '[Channel' + (channel + 1) + ']';
     }
   });
 };
@@ -98,7 +98,8 @@ NumarkDJ2GO2.StandardDeck = function (channel) {
 
   this.knob2 = new components.Pot({
     midi: [0xB0 + channel, 0x16],
-    inKey: 'pregain'
+    inKey: 'pregain',
+    group: '[Channel' + (channel + 1) + ']'
   });
   NumarkDJ2GO2.DeckBase.call(this, channel);
 };
@@ -199,7 +200,7 @@ NumarkDJ2GO2.LoadButton = function(channel, midi) {
   components.Button.call(this);
   this.channel = channel;
   this.midi = midi;
-  this.group = '[Channel16]';
+  this.group = '[Channel' + (channel + 1) + ']';
 }
 NumarkDJ2GO2.LoadButton.prototype = new components.Button({
   input: function(channel, control) {
@@ -241,6 +242,7 @@ NumarkDJ2GO2.Fader = function(channel) {
   components.Pot.call(this);
   this.midi = [0xB0 + channel, 0x09];
   this.invert = true;
+  this.group = '[Channel' + (channel + 1) + ']';
 }
 NumarkDJ2GO2.EqGainKnob.prototype = Object.create(components.Pot.prototype);
 
@@ -248,7 +250,7 @@ NumarkDJ2GO2.EqGainKnob.prototype = Object.create(components.Pot.prototype);
  * Pitch fader
  */
 NumarkDJ2GO2.PitchFader = function(channel) {
-  NumarkDJ2GO2.Fader.call(this);
+  NumarkDJ2GO2.Fader.call(this, channel);
 }
 NumarkDJ2GO2.PitchFader.prototype = new components.Pot({
   inKey: 'rate'
@@ -258,7 +260,7 @@ NumarkDJ2GO2.PitchFader.prototype = new components.Pot({
  * Volume fader
  */
 NumarkDJ2GO2.VolumeFader = function(channel) {
-  NumarkDJ2GO2.Fader.call(this);
+  NumarkDJ2GO2.Fader.call(this, channel);
 }
 NumarkDJ2GO2.VolumeFader.prototype = new components.Pot({
   inKey: 'volume'

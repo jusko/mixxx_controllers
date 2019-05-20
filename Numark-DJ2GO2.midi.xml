@@ -240,7 +240,7 @@
 
             <!-- Browse Button -->
             <control>
-                <group>[Channel16]</group>
+                <group>[Master]</group>
                 <key>NumarkDJ2GO2.shiftModeOn</key>
                 <description>Enter shift mode</description>
                 <status>0x9F</status>
@@ -250,7 +250,7 @@
                 </options>
             </control>
             <control>
-                <group>[Channel16]</group>
+                <group>[Master]</group>
                 <key>NumarkDJ2GO2.shiftModeOff</key>
                 <description>Exit shift mode</description>
                 <status>0x8F</status>
@@ -262,7 +262,7 @@
 
             <!-- Load Buttons -->
             <control>
-                <group>[Channel16]</group>
+                <group>[Channel1]</group>
                 <key>NumarkDJ2GO2.leftDeck.loadButton.input</key>
                 <description></description>
                 <status>0x9F</status>
@@ -272,7 +272,7 @@
                 </options>
             </control>
             <control>
-                <group>[Channel16]</group>
+                <group>[Channel2]</group>
                 <key>NumarkDJ2GO2.rightDeck.loadButton.input</key>
                 <description></description>
                 <status>0x9F</status>
