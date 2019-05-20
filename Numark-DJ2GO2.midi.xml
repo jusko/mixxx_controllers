@@ -327,6 +327,174 @@
                     <Script-Binding/>
                 </options>
             </control>
+
+            <!-- Button Pads 1 -->
+            <control>
+                <group>[Channel1]</group>
+                <key>NumarkDJ2GO2.leftDeck.buttonPad.buttons[0].input</key>
+                <description>Button 1</description>
+                <status>0x94</status>
+                <midino>0x01</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
+            <control>
+                <group>[Channel1]</group>
+                <key>NumarkDJ2GO2.leftDeck.buttonPad.buttons[0].input</key>
+                <description>Button 1</description>
+                <status>0x84</status>
+                <midino>0x01</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
+            <control>
+                <group>[Channel2]</group>
+                <key>NumarkDJ2GO2.rightDeck.buttonPad.buttons[0].input</key>
+                <description>Button 1</description>
+                <status>0x95</status>
+                <midino>0x01</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
+            <control>
+                <group>[Channel2]</group>
+                <key>NumarkDJ2GO2.rightDeck.buttonPad.buttons[0].input</key>
+                <description>Button 1</description>
+                <status>0x85</status>
+                <midino>0x01</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
+
+            <!-- Button Pads 2 -->
+            <control>
+                <group>[Channel1]</group>
+                <key>NumarkDJ2GO2.leftDeck.buttonPad.buttons[1].input</key>
+                <description>Button 2</description>
+                <status>0x94</status>
+                <midino>0x02</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
+            <control>
+                <group>[Channel1]</group>
+                <key>NumarkDJ2GO2.leftDeck.buttonPad.buttons[1].input</key>
+                <description>Button 2</description>
+                <status>0x84</status>
+                <midino>0x02</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
+            <control>
+                <group>[Channel2]</group>
+                <key>NumarkDJ2GO2.rightDeck.buttonPad.buttons[1].input</key>
+                <description>Button 2</description>
+                <status>0x95</status>
+                <midino>0x02</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
+            <control>
+                <group>[Channel2]</group>
+                <key>NumarkDJ2GO2.rightDeck.buttonPad.buttons[1].input</key>
+                <description>Button 2</description>
+                <status>0x85</status>
+                <midino>0x02</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
+
+            <!-- Button Pads 3 -->
+            <control>
+                <group>[Channel1]</group>
+                <key>NumarkDJ2GO2.leftDeck.buttonPad.buttons[2].input</key>
+                <description>Button 3</description>
+                <status>0x94</status>
+                <midino>0x03</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
+            <control>
+                <group>[Channel1]</group>
+                <key>NumarkDJ2GO2.leftDeck.buttonPad.buttons[2].input</key>
+                <description>Button 3</description>
+                <status>0x84</status>
+                <midino>0x03</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
+            <control>
+                <group>[Channel2]</group>
+                <key>NumarkDJ2GO2.rightDeck.buttonPad.buttons[2].input</key>
+                <description>Button 3</description>
+                <status>0x95</status>
+                <midino>0x03</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
+            <control>
+                <group>[Channel2]</group>
+                <key>NumarkDJ2GO2.rightDeck.buttonPad.buttons[2].input</key>
+                <description>Button 3</description>
+                <status>0x85</status>
+                <midino>0x03</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
+
+            <!-- Button Pads 4 -->
+            <control>
+                <group>[Channel1]</group>
+                <key>NumarkDJ2GO2.leftDeck.buttonPad.buttons[3].input</key>
+                <description>Button 4</description>
+                <status>0x94</status>
+                <midino>0x04</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
+            <control>
+                <group>[Channel1]</group>
+                <key>NumarkDJ2GO2.leftDeck.buttonPad.buttons[3].input</key>
+                <description>Button 4</description>
+                <status>0x84</status>
+                <midino>0x04</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
+            <control>
+                <group>[Channel2]</group>
+                <key>NumarkDJ2GO2.rightDeck.buttonPad.buttons[3].input</key>
+                <description>Button 4</description>
+                <status>0x95</status>
+                <midino>0x04</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
+            <control>
+                <group>[Channel2]</group>
+                <key>NumarkDJ2GO2.rightDeck.buttonPad.buttons[3].input</key>
+                <description>Button 4</description>
+                <status>0x85</status>
+                <midino>0x04</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
         </controls>
         <outputs/>
     </controller>
