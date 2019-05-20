@@ -1,31 +1,26 @@
-var NumarkDJ2GO2 = new Object();
+var NumarkDJ2GO2 = new Object({
+  shiftMode: false,
+  channels: [
+    '[Channel1]',
+    '[Channel2]'
+  ]
+});
+
+/**
+ * Override Pot's connect and disconnect methods to work more smoothly with
+ * the way MultiDeck hot swaps components when toggling decks
+ */
+components.Pot.prototype.connect = function() {
+    engine.softTakeover(this.group, this.inKey, true);
+}
+components.Pot.prototype.disconnect = function() {
+  engine.softTakeoverIgnoreNextValue(this.group, this.inKey);
+}
 
 /**
  * Init
  */
 NumarkDJ2GO2.init = function (id, debug) {
-  /** 
-   * The controller sends press signals with 0x9 and release signals with 0x8
-   * opcodes. Therefore the isPress function must be overridden as explained
-   * at the end of https://www.mixxx.org/wiki/doku.php/components_js#button
-   */
-  components.Button.prototype.isPress = function (channel, control, value, status) {
-    return (status & 0xF0) === 0x90;
-  }
-
-  /**
-   * Override Pot's connect and disconnect methods to work more smoothly with
-   * the way MultiDeck hot swaps components when toggling decks
-   */
-  components.Pot.prototype.connect = function() {
-      engine.softTakeover(this.group, this.inKey, true);
-  }
-  components.Pot.prototype.disconnect = function() {
-    engine.softTakeoverIgnoreNextValue(this.group, this.inKey);
-  }
-
-  /** Setup the controller */
-  NumarkDJ2GO2.shiftMode = false;
   NumarkDJ2GO2.decks = [
     new NumarkDJ2GO2.MultiDeck(0),
     new NumarkDJ2GO2.MultiDeck(1)
@@ -62,7 +57,6 @@ NumarkDJ2GO2.shiftModeOff = function () {
   NumarkDJ2GO2.shiftMode = false;
 };
 
-
 /**
  * Core deck controls
  */
@@ -76,7 +70,7 @@ NumarkDJ2GO2.DeckBase = function (channel) {
 
   this.reconnectComponents(function (component) {
     if (component.group === undefined) {
-      component.group = '[Channel' + (channel + 1) + ']';
+      component.group = NumarkDJ2GO2.channels[channel];
     }
   });
 };
@@ -99,7 +93,7 @@ NumarkDJ2GO2.StandardDeck = function (channel) {
   this.knob2 = new components.Pot({
     midi: [0xB0 + channel, 0x16],
     inKey: 'pregain',
-    group: '[Channel' + (channel + 1) + ']'
+    group: NumarkDJ2GO2.channels[channel]
   });
   NumarkDJ2GO2.DeckBase.call(this, channel);
 };
@@ -200,10 +194,10 @@ NumarkDJ2GO2.LoadButton = function(channel, midi) {
   components.Button.call(this);
   this.channel = channel;
   this.midi = midi;
-  this.group = '[Channel' + (channel + 1) + ']';
+  this.group = NumarkDJ2GO2.channels[channel];
 }
 NumarkDJ2GO2.LoadButton.prototype = new components.Button({
-  input: function(channel, control) {
+  input: function(__channel, control) {
     if (NumarkDJ2GO2.shiftMode) {
       NumarkDJ2GO2.decks[control - 0x02].toggle();
       NumarkDJ2GO2.setDecks();
@@ -242,7 +236,7 @@ NumarkDJ2GO2.Fader = function(channel) {
   components.Pot.call(this);
   this.midi = [0xB0 + channel, 0x09];
   this.invert = true;
-  this.group = '[Channel' + (channel + 1) + ']';
+  this.group = NumarkDJ2GO2.channels[channel];
 }
 NumarkDJ2GO2.EqGainKnob.prototype = Object.create(components.Pot.prototype);
 
