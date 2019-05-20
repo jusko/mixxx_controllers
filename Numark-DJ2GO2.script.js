@@ -77,6 +77,7 @@ NumarkDJ2GO2.DeckBase = function (channel) {
   this.loadButton = new NumarkDJ2GO2.LoadButton([0x9F, 0x02 - channel]);
   this.hotcues = new NumarkDJ2GO2.HotcueButtonPad(channel);
   this.autoloops = new NumarkDJ2GO2.AutoLoopButtonPad(channel);
+  this.loops = new NumarkDJ2GO2.ManualLoopButtonPad(channel);
 
   this.reconnectComponents(function (component) {
     if (component.group === undefined) {
@@ -307,11 +308,43 @@ NumarkDJ2GO2.AutoLoopButtonPad = function(channel) {
 
     return new components.Button({
       midi: [0x94 + channel, 0x10 + number],
-      number: number,
       group: NumarkDJ2GO2.channels[channel],
       inKey: 'beatloop_' + beats + '_toggle',
       outKey: 'beatloop_' + beats + '_enabled'
     });
   });
-}
+};
 NumarkDJ2GO2.AutoLoopButtonPad.prototype = Object.create(NumarkDJ2GO2.ButtonPad.prototype);
+
+/**
+ * Manual loop buttons
+ */
+NumarkDJ2GO2.ManualLoopButtonPad = function(channel) {
+  components.ComponentContainer.call(this);
+
+  this.button1 = new components.Button({
+    midi: [0x94 + channel, 0x21],
+    group: NumarkDJ2GO2.channels[channel],
+    inKey: 'loop_in',
+    outKey: 'loop_enabled'
+  });
+  this.button2 = new components.Button({
+    midi: [0x94 + channel, 0x22],
+    group: NumarkDJ2GO2.channels[channel],
+    inKey: 'loop_out',
+    outKey: 'loop_enabled'
+  });
+  this.button3 = new components.Button({
+    midi: [0x94 + channel, 0x23],
+    group: NumarkDJ2GO2.channels[channel],
+    inKey: 'reloop_toggle',
+    on: 0x00
+  });
+  this.button4 = new components.Button({
+    midi: [0x94 + channel, 0x24],
+    group: NumarkDJ2GO2.channels[channel],
+    inKey: 'loop_in_goto',
+    on: 0x00
+  });
+};
+NumarkDJ2GO2.AutoLoopButtonPad.prototype = Object.create(components.ComponentContainer.prototype);
