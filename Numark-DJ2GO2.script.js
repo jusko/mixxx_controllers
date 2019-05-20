@@ -26,6 +26,7 @@ NumarkDJ2GO2.init = function (id, debug) {
     new NumarkDJ2GO2.MultiDeck(1)
   ];
   NumarkDJ2GO2.setDecks();
+  NumarkDJ2GO2.browser = new NumarkDJ2GO2.Browser();
 };
 
 NumarkDJ2GO2.setDecks = function() {
@@ -58,11 +59,13 @@ NumarkDJ2GO2.shutdown = function (id, debug) {
 NumarkDJ2GO2.shiftModeOn = function () {
   NumarkDJ2GO2.shiftMode = true;
   NumarkDJ2GO2.leftDeck.hotcues.shift();
+  NumarkDJ2GO2.browser.shift();
 };
 
 NumarkDJ2GO2.shiftModeOff = function () {
   NumarkDJ2GO2.shiftMode = false;
   NumarkDJ2GO2.leftDeck.hotcues.unshift();
+  NumarkDJ2GO2.browser.unshift();
 };
 
 /**
@@ -341,3 +344,53 @@ NumarkDJ2GO2.ManualLoopButtonPad = function(channel) {
   });
 };
 NumarkDJ2GO2.AutoLoopButtonPad.prototype = Object.create(components.ComponentContainer.prototype);
+
+/**
+ * Browser
+ */
+NumarkDJ2GO2.Browser = function() {
+  components.ComponentContainer.call(this);
+
+  this.browseKnob = new components.Encoder({
+    midi: [0xBF, 0x00],
+    group: '[Library]',
+    key: 'MoveVertical',
+    shift: function() {
+      this.inKey = 'MoveFocus';
+    },
+    unshift: function() {
+      this.inKey = 'MoveVertical';
+    },
+    input: function(channel, control, value) {
+      if (value === 0x01) {
+        this.inSetParameter(1);
+      }
+      else if (value === 0x7F) {
+        this.inSetParameter(-1);
+      }
+    }
+  });
+  this.loadButton1 = new NumarkDJ2GO2.LoadButton(0, 'MoveLeft');
+  this.loadButton2 = new NumarkDJ2GO2.LoadButton(1, 'MoveRight');
+}
+NumarkDJ2GO2.Browser.prototype = Object.create(components.ComponentContainer.prototype);
+
+/**
+ * Load buttons for for browsing and loading tracks
+ */
+NumarkDJ2GO2.LoadButton = function(channel, key) {
+  components.Button.call(this);
+  this.channel = channel;
+  this.key = key;
+  this.midi = [0x9F, 0x02 + channel];
+}
+NumarkDJ2GO2.LoadButton.prototype = new components.Button({
+  shift: function() {
+    this.group = NumarkDJ2GO2.channels[this.channel];
+    this.inKey = 'LoadSelectedTrack';
+  },
+  unshift: function() {
+    this.group = '[Library]';
+    this.inKey = this.key;
+  }
+});

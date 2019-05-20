@@ -238,7 +238,7 @@
                 </options>
             </control>
 
-            <!-- Browse Button -->
+            <!-- Shift Key (Browse button pressed) -->
             <control>
                 <group>[Master]</group>
                 <key>NumarkDJ2GO2.shiftModeOn</key>
@@ -260,10 +260,19 @@
                 </options>
             </control>
 
-            <!-- Load Buttons -->
+            <!-- Library Browser -->
             <control>
-                <group>[Channel1]</group>
-                <key>NumarkDJ2GO2.leftDeck.loadButton.input</key>
+                <group>[Library]</group>
+                <key>NumarkDJ2GO2.browser.browseKnob.input</key>
+                <description>Exit shift mode</description>
+                <status>0xBF</status>
+                <midino>0x00</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
+            <control>
+                <key>NumarkDJ2GO2.browser.loadButton1.input</key>
                 <description></description>
                 <status>0x9F</status>
                 <midino>0x02</midino>
@@ -272,8 +281,7 @@
                 </options>
             </control>
             <control>
-                <group>[Channel2]</group>
-                <key>NumarkDJ2GO2.rightDeck.loadButton.input</key>
+                <key>NumarkDJ2GO2.browser.loadButton2.input</key>
                 <description></description>
                 <status>0x9F</status>
                 <midino>0x03</midino>
