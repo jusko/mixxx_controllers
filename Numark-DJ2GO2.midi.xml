@@ -238,10 +238,10 @@
                 </options>
             </control>
 
-            <!-- Shift Key (Browse button pressed) -->
+            <!-- Browser -->
             <control>
                 <group>[Master]</group>
-                <key>NumarkDJ2GO2.shiftModeOn</key>
+                <key>NumarkDJ2GO2.browser.shiftButton.input</key>
                 <description>Enter shift mode</description>
                 <status>0x9F</status>
                 <midino>0x06</midino>
@@ -251,7 +251,7 @@
             </control>
             <control>
                 <group>[Master]</group>
-                <key>NumarkDJ2GO2.shiftModeOff</key>
+                <key>NumarkDJ2GO2.browser.shiftButton.input</key>
                 <description>Exit shift mode</description>
                 <status>0x8F</status>
                 <midino>0x06</midino>
@@ -260,7 +260,6 @@
                 </options>
             </control>
 
-            <!-- Library Browser -->
             <control>
                 <group>[Library]</group>
                 <key>NumarkDJ2GO2.browser.browseKnob.input</key>

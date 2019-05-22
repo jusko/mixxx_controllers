@@ -53,21 +53,6 @@ NumarkDJ2GO2.shutdown = function (id, debug) {
   }
 };
 
-/*
- * Enable shift mode while the browse button is held down
- */
-NumarkDJ2GO2.shiftModeOn = function () {
-  NumarkDJ2GO2.shiftMode = true;
-  NumarkDJ2GO2.leftDeck.hotcues.shift();
-  NumarkDJ2GO2.browser.shift();
-};
-
-NumarkDJ2GO2.shiftModeOff = function () {
-  NumarkDJ2GO2.shiftMode = false;
-  NumarkDJ2GO2.leftDeck.hotcues.unshift();
-  NumarkDJ2GO2.browser.unshift();
-};
-
 /**
  * Core deck controls
  */
@@ -159,6 +144,7 @@ NumarkDJ2GO2.JogWheel = function (channel) {
 NumarkDJ2GO2.JogWheel.prototype = new components.Encoder({
   inKey: 'playposition',
   input: function(channel, control, value) {
+    // TODO: Implement shift & unshift functions & remove the global variable
     var tick = NumarkDJ2GO2.shiftMode ? 0.00025  : 0.01;
     if (value === 0x01) {
       this.inSetParameter(this.inGetParameter() + tick);
@@ -360,6 +346,7 @@ NumarkDJ2GO2.Browser = function() {
   });
   this.loadButton1 = new NumarkDJ2GO2.LoadButton(0);
   this.loadButton2 = new NumarkDJ2GO2.LoadButton(1);
+  this.shiftButton = new NumarkDJ2GO2.ShiftButton();
 }
 NumarkDJ2GO2.Browser.prototype = Object.create(components.ComponentContainer.prototype);
 
@@ -379,5 +366,25 @@ NumarkDJ2GO2.LoadButton.prototype = new components.Button({
   unshift: function() {
     this.group = NumarkDJ2GO2.channels[this.channel];
     this.inKey = 'LoadSelectedTrack';
+  }
+});
+
+NumarkDJ2GO2.ShiftButton = function() {
+  components.Button.call(this);
+
+  this.midi = [0x9F, 0x06];
+};
+NumarkDJ2GO2.ShiftButton.prototype = new components.Button({
+  input: function(channel, control, value, status) {
+    if (this.isPress(channel, control, value, status)) {
+      NumarkDJ2GO2.leftDeck.shift();
+      NumarkDJ2GO2.browser.shift();
+      NumarkDJ2GO2.rightDeck.shift();
+    }
+    else {
+      NumarkDJ2GO2.leftDeck.unshift();
+      NumarkDJ2GO2.browser.unshift();
+      NumarkDJ2GO2.rightDeck.unshift();
+    }
   }
 });
