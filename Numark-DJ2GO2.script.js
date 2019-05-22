@@ -49,6 +49,7 @@ NumarkDJ2GO2.shutdown = function (id, debug) {
  */
 NumarkDJ2GO2.Deck = function (channel) {
   components.Deck.call(this, [channel + 1]);
+  this.channel = channel;
 
   this.playButton = new components.PlayButton([0x90 + channel, 0x00]);
   this.cueButton = new components.CueButton([0x90 + channel, 0x01]);
@@ -69,6 +70,7 @@ NumarkDJ2GO2.Deck = function (channel) {
     }
   });
   this.shiftLocked = false;
+  this.flashPflLightTimer = 0;
 };
 NumarkDJ2GO2.Deck.prototype = Object.create(components.Deck.prototype);
 
@@ -104,7 +106,22 @@ NumarkDJ2GO2.Deck.prototype.unshift = function() {
 };
 
 NumarkDJ2GO2.Deck.prototype.toggleShiftLock = function() {
-  this.shiftLocked = !this.shiftLocked;
+  if (this.shiftLocked) {
+    engine.stopTimer(this.flashPflLightTimer);
+    this.flashPflLightTimer = 0;
+    val = engine.getValue(NumarkDJ2GO2.channels[this.channel], 'pfl') === 1 ? 0x90 : 0x80;
+    midi.sendShortMsg(val + this.channel, 0x1B, 0x01);
+    this.shiftLocked = false;
+  }
+  else {
+    this.shiftLocked = true;
+    this.flashPflLightTimer = engine.beginTimer(500, function() {
+        midi.sendShortMsg(0x90 + this.channel, 0x1B, 0x01);
+        engine.beginTimer(250, function() {
+          midi.sendShortMsg(0x80 + this.channel, 0x1B, 0x01);
+        }, true);
+    });
+  }
 };
 
 /**
