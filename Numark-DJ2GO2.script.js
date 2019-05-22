@@ -67,6 +67,7 @@ NumarkDJ2GO2.DeckBase = function (channel) {
   this.loops = new NumarkDJ2GO2.ManualLoopButtonPad(channel);
 
   this.fader = new NumarkDJ2GO2.Fader(channel);
+  this.jogWheel = new NumarkDJ2GO2.JogWheel(channel);
 
   this.reconnectComponents(function (component) {
     if (component.group === undefined) {
@@ -80,9 +81,6 @@ NumarkDJ2GO2.DeckBase.prototype = Object.create(components.Deck.prototype);
  * Standard deck
  */
 NumarkDJ2GO2.StandardDeck = function (channel) {
-
-  this.jogWheel = new NumarkDJ2GO2.JogWheel(channel);
-
   this.knob1 = new components.Pot({
     midi: [0xBF, (channel === 0 ? 0x0A : 0x0C)],
     inKey: channel == 0 ? 'gain' : 'headGain',
@@ -102,8 +100,6 @@ NumarkDJ2GO2.StandardDeck.prototype = Object.create(NumarkDJ2GO2.DeckBase.protot
  * Equalizer deck
  */
 NumarkDJ2GO2.EqualizerDeck = function (channel) {
-  this.jogWheel = new NumarkDJ2GO2.JogWheelGain(channel, 'parameter1');
-
   this.knob1 = new NumarkDJ2GO2.EqGainKnob(channel, {
     midi: [0xBF, (channel === 0 ? 0x0A : 0x0C)],
     inKey: 'parameter2'
@@ -134,43 +130,30 @@ NumarkDJ2GO2.headphonesOff = function(channel, control, value, status, group) {
 };
 
 /**
- * Standard jog wheel
+ * Jog wheel
  */
 NumarkDJ2GO2.JogWheel = function (channel) {
   components.Encoder.call(this);
   this.midi = [0xB0 + channel, 0x06];
+  this.channel = channel;
 }
 NumarkDJ2GO2.JogWheel.prototype = new components.Encoder({
-  inKey: 'playposition',
-  input: function(channel, control, value) {
-    // TODO: Implement shift & unshift functions & remove the global variable
-    var tick = NumarkDJ2GO2.shiftMode ? 0.00025  : 0.01;
-    if (value === 0x01) {
-      this.inSetParameter(this.inGetParameter() + tick);
-    }
-    else if (value === 0x7F) {
-      this.inSetParameter(this.inGetParameter() - tick);
-    }
-  }
-});
-
-/**
- * Jog wheel mapped to a gain level
- */
-NumarkDJ2GO2.JogWheelGain = function (channel, gain) {
-  components.Encoder.call(this);
-
-  this.midi = [0xB0 + channel, 0x06];
-  this.group = '[EqualizerRack1_[Channel' + (channel + 1) + ']_Effect1]';
-  this.inKey = gain;
-}
-NumarkDJ2GO2.JogWheelGain.prototype = new components.Encoder({
+  shift: function() {
+    this.group = '[EqualizerRack1_[Channel' + (this.channel + 1) + ']_Effect1]';
+    this.inKey = 'parameter1';
+    this.tick = 0.005;
+  },
+  unshift: function() {
+    this.group = NumarkDJ2GO2.channels[this.channel];
+    this.inKey = 'playposition';
+    this.tick = 0.001;
+  },
   input: function(channel, control, value) {
     if (value === 0x01) {
-      this.inSetParameter(this.inGetParameter() + 0.005);
+      this.inSetParameter(this.inGetParameter() + this.tick);
     }
     else if (value === 0x7F) {
-      this.inSetParameter(this.inGetParameter() - 0.005);
+      this.inSetParameter(this.inGetParameter() - this.tick);
     }
   }
 });
