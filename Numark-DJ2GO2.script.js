@@ -20,18 +20,10 @@ components.Pot.prototype.disconnect = function() {
  * Init
  */
 NumarkDJ2GO2.init = function (id, debug) {
-  NumarkDJ2GO2.decks = [
-    new NumarkDJ2GO2.MultiDeck(0),
-    new NumarkDJ2GO2.MultiDeck(1)
-  ];
-  NumarkDJ2GO2.setDecks();
+  NumarkDJ2GO2.leftDeck = new NumarkDJ2GO2.Deck(0);
+  NumarkDJ2GO2.rightDeck = new NumarkDJ2GO2.Deck(1);
   NumarkDJ2GO2.browser = new NumarkDJ2GO2.Browser();
 };
-
-NumarkDJ2GO2.setDecks = function() {
-  NumarkDJ2GO2.leftDeck = NumarkDJ2GO2.decks[0].getDeck();
-  NumarkDJ2GO2.rightDeck = NumarkDJ2GO2.decks[1].getDeck();
-}
 
 /**
  * Shutdown
@@ -53,9 +45,9 @@ NumarkDJ2GO2.shutdown = function (id, debug) {
 };
 
 /**
- * Core deck controls
+ * Deck
  */
-NumarkDJ2GO2.DeckBase = function (channel) {
+NumarkDJ2GO2.Deck = function (channel) {
   components.Deck.call(this, [channel + 1]);
 
   this.playButton = new components.PlayButton([0x90 + channel, 0x00]);
@@ -77,37 +69,36 @@ NumarkDJ2GO2.DeckBase = function (channel) {
     }
   });
 };
-NumarkDJ2GO2.DeckBase.prototype = Object.create(components.Deck.prototype);
+NumarkDJ2GO2.Deck.prototype = Object.create(components.Deck.prototype);
 
-NumarkDJ2GO2.DeckBase.prototype.shiftable = function(component) {
+/**
+ * Override default shift methods for the container to work better
+ * with our requirements
+ */
+NumarkDJ2GO2.Deck.prototype.shiftable = function(component) {
   return (component instanceof NumarkDJ2GO2.Fader) ||
          (component instanceof NumarkDJ2GO2.JogWheel) ||
          (component instanceof NumarkDJ2GO2.MiddleKnob) ||
          (component instanceof NumarkDJ2GO2.HighKnob);
 };
-NumarkDJ2GO2.DeckBase.prototype.shift = function() {
+NumarkDJ2GO2.Deck.prototype.shift = function() {
   this.reconnectComponents(function(component) {
-    if (NumarkDJ2GO2.DeckBase.prototype.shiftable(component)) {
+    if (NumarkDJ2GO2.Deck.prototype.shiftable(component)) {
       component.shift();
     }
   });
 };
-NumarkDJ2GO2.DeckBase.prototype.unshift = function() {
+NumarkDJ2GO2.Deck.prototype.unshift = function() {
   this.reconnectComponents(function(component) {
-    if (NumarkDJ2GO2.DeckBase.prototype.shiftable(component)) {
+    if (NumarkDJ2GO2.Deck.prototype.shiftable(component)) {
       component.unshift();
     }
   });
 };
 
 /**
- * Standard deck
+ * Middle Knob
  */
-NumarkDJ2GO2.StandardDeck = function (channel) {
-  NumarkDJ2GO2.DeckBase.call(this, channel);
-};
-NumarkDJ2GO2.StandardDeck.prototype = Object.create(NumarkDJ2GO2.DeckBase.prototype);
-
 NumarkDJ2GO2.MiddleKnob = function (channel) {
   components.Pot.call(this);
   this.midi = [0xBF, (channel === 0 ? 0x0A : 0x0C)];
@@ -126,6 +117,9 @@ NumarkDJ2GO2.MiddleKnob.prototype = new components.Pot({
   }
 });
 
+/**
+ * High Knob
+ */
 NumarkDJ2GO2.HighKnob = function (channel) {
   components.Pot.call(this);
   this.channel = channel;
@@ -144,13 +138,6 @@ NumarkDJ2GO2.HighKnob.prototype = new components.Pot({
   }
 });
 
-/**
- * Equalizer deck
- */
-NumarkDJ2GO2.EqualizerDeck = function (channel) {
-  NumarkDJ2GO2.DeckBase.call(this, channel);
-};
-NumarkDJ2GO2.EqualizerDeck.prototype = Object.create(NumarkDJ2GO2.DeckBase.prototype);
 
 /**
  * Headphones/PFL Events 
@@ -194,30 +181,6 @@ NumarkDJ2GO2.JogWheel.prototype = new components.Encoder({
     else if (value === 0x7F) {
       this.inSetParameter(this.inGetParameter() - this.tick);
     }
-  }
-});
-
-/**
- * Simple deck container to track toggling between single instances of
- * StandardDeck and EqualizerDeck
- */
-NumarkDJ2GO2.MultiDeck = function(channel) {
-  this.currentDeck = 0;
-  this.decks = [
-    new NumarkDJ2GO2.StandardDeck(channel),
-    new NumarkDJ2GO2.EqualizerDeck(channel)
-  ];
-};
-NumarkDJ2GO2.MultiDeck.prototype = new Object({
-  toggle: function() {
-    this.decks[this.currentDeck].forEachComponent(function(component) {
-      component.disconnect();
-    });
-    this.currentDeck = this.currentDeck === 0 ? 1 : 0;
-    this.decks[this.currentDeck].reconnectComponents();
-  },
-  getDeck: function() {
-    return this.decks[this.currentDeck];
   }
 });
 
@@ -368,6 +331,9 @@ NumarkDJ2GO2.LoadButton.prototype = new components.Button({
   }
 });
 
+/**
+ * Shift functionality when browse button pressed
+ */
 NumarkDJ2GO2.ShiftButton = function() {
   components.Button.call(this);
 
