@@ -88,6 +88,7 @@ NumarkDJ2GO2.Deck.prototype.shift = function() {
   if (this.shiftLocked) {
     return;
   }
+  this.hotcues.shift();
   this.reconnectComponents(function(component) {
     if (NumarkDJ2GO2.Deck.prototype.shiftable(component)) {
       component.shift();
@@ -98,6 +99,7 @@ NumarkDJ2GO2.Deck.prototype.unshift = function() {
   if (this.shiftLocked) {
     return;
   }
+  this.hotcues.unshift();
   this.reconnectComponents(function(component) {
     if (NumarkDJ2GO2.Deck.prototype.shiftable(component)) {
       component.unshift();
