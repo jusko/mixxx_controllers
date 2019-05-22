@@ -315,7 +315,7 @@
             <!-- Channel Pitch Faders -->
             <control>
                 <group>[Channel1]</group>
-                <key>NumarkDJ2GO2.leftDeck.slider.input</key>
+                <key>NumarkDJ2GO2.leftDeck.fader.input</key>
                 <description>Playback speed (Channel 1)</description>
                 <status>0xB0</status>
                 <midino>0x09</midino>
@@ -326,7 +326,7 @@
 
             <control>
                 <group>[Channel2]</group>
-                <key>NumarkDJ2GO2.rightDeck.slider.input</key>
+                <key>NumarkDJ2GO2.rightDeck.fader.input</key>
                 <description>Playback speed (Channel 2)</description>
                 <status>0xB1</status>
                 <midino>0x09</midino>

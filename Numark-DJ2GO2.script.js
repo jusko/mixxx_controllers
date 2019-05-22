@@ -11,7 +11,7 @@ var NumarkDJ2GO2 = new Object({
  * the way MultiDeck hot swaps components when toggling decks
  */
 components.Pot.prototype.connect = function() {
-    engine.softTakeover(this.group, this.inKey, true);
+  engine.softTakeover(this.group, this.inKey, true);
 }
 components.Pot.prototype.disconnect = function() {
   engine.softTakeoverIgnoreNextValue(this.group, this.inKey);
@@ -66,6 +66,8 @@ NumarkDJ2GO2.DeckBase = function (channel) {
   this.autoloops = new NumarkDJ2GO2.AutoLoopButtonPad(channel);
   this.loops = new NumarkDJ2GO2.ManualLoopButtonPad(channel);
 
+  this.fader = new NumarkDJ2GO2.Fader(channel);
+
   this.reconnectComponents(function (component) {
     if (component.group === undefined) {
       component.group = NumarkDJ2GO2.channels[channel];
@@ -78,7 +80,6 @@ NumarkDJ2GO2.DeckBase.prototype = Object.create(components.Deck.prototype);
  * Standard deck
  */
 NumarkDJ2GO2.StandardDeck = function (channel) {
-  this.slider = new NumarkDJ2GO2.PitchFader(channel);
 
   this.jogWheel = new NumarkDJ2GO2.JogWheel(channel);
 
@@ -101,8 +102,6 @@ NumarkDJ2GO2.StandardDeck.prototype = Object.create(NumarkDJ2GO2.DeckBase.protot
  * Equalizer deck
  */
 NumarkDJ2GO2.EqualizerDeck = function (channel) {
-  this.slider = new NumarkDJ2GO2.VolumeFader(channel);
-
   this.jogWheel = new NumarkDJ2GO2.JogWheelGain(channel, 'parameter1');
 
   this.knob1 = new NumarkDJ2GO2.EqGainKnob(channel, {
@@ -211,7 +210,7 @@ NumarkDJ2GO2.MultiDeck.prototype = new Object({
 });
 
 /**
- * Base fader class
+ * Fader
  */
 NumarkDJ2GO2.Fader = function(channel) {
   components.Pot.call(this);
@@ -219,26 +218,17 @@ NumarkDJ2GO2.Fader = function(channel) {
   this.invert = true;
   this.group = NumarkDJ2GO2.channels[channel];
 }
-NumarkDJ2GO2.EqGainKnob.prototype = Object.create(components.Pot.prototype);
-
-/**
- * Pitch fader
- */
-NumarkDJ2GO2.PitchFader = function(channel) {
-  NumarkDJ2GO2.Fader.call(this, channel);
-}
-NumarkDJ2GO2.PitchFader.prototype = new components.Pot({
-  inKey: 'rate'
-});
-
-/**
- * Volume fader
- */
-NumarkDJ2GO2.VolumeFader = function(channel) {
-  NumarkDJ2GO2.Fader.call(this, channel);
-}
-NumarkDJ2GO2.VolumeFader.prototype = new components.Pot({
-  inKey: 'volume'
+NumarkDJ2GO2.Fader.prototype = new components.Pot({
+  shift: function() {
+    this.disconnect();
+    this.inKey = 'volume';
+    this.connect();
+  },
+  unshift: function() {
+    this.disconnect();
+    this.inKey = 'rate';
+    this.connect();
+  }
 });
 
 /**
