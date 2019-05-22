@@ -92,6 +92,7 @@ NumarkDJ2GO2.MiddleKnob = function (channel) {
   this.midi = [0xBF, (channel === 0 ? 0x0A : 0x0C)];
   this.channel = channel;
   this.inKey = (channel === 0) ? 'gain' : 'headGain';
+  this.group = '[Master]';
 };
 NumarkDJ2GO2.MiddleKnob.prototype = new components.Pot({
   shift: function() {
@@ -210,6 +211,7 @@ NumarkDJ2GO2.Fader = function(channel) {
   this.midi = [0xB0 + channel, 0x09];
   this.invert = true;
   this.group = NumarkDJ2GO2.channels[channel];
+  this.inKey = 'rate';
 }
 NumarkDJ2GO2.Fader.prototype = new components.Pot({
   shift: function() {
