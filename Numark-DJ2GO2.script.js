@@ -69,6 +69,7 @@ NumarkDJ2GO2.DeckBase = function (channel) {
   this.jogWheel = new NumarkDJ2GO2.JogWheel(channel);
 
   this.knob1 = new NumarkDJ2GO2.MiddleKnob(channel);
+  this.knob2 = new NumarkDJ2GO2.HighKnob(channel);
 
   this.reconnectComponents(function (component) {
     if (component.group === undefined) {
@@ -82,11 +83,6 @@ NumarkDJ2GO2.DeckBase.prototype = Object.create(components.Deck.prototype);
  * Standard deck
  */
 NumarkDJ2GO2.StandardDeck = function (channel) {
-  this.knob2 = new components.Pot({
-    midi: [0xB0 + channel, 0x16],
-    inKey: 'pregain',
-    group: NumarkDJ2GO2.channels[channel]
-  });
   NumarkDJ2GO2.DeckBase.call(this, channel);
 };
 NumarkDJ2GO2.StandardDeck.prototype = Object.create(NumarkDJ2GO2.DeckBase.prototype);
@@ -108,7 +104,24 @@ NumarkDJ2GO2.MiddleKnob.prototype = new components.Pot({
     this.disconnect();
     this.inKey = (this.channel === 0) ? 'gain' : 'headGain';
     this.group = '[Master]';
-    this.connect();
+  }
+});
+
+NumarkDJ2GO2.HighKnob = function (channel) {
+  components.Pot.call(this);
+  this.channel = channel;
+  this.midi = [0xB0 + channel, 0x16];
+  this.group = NumarkDJ2GO2.channels[channel];
+  this.inKey = 'pregain';
+};
+NumarkDJ2GO2.HighKnob.prototype = new components.Pot({
+  shift: function() {
+    this.inKey = 'parameter3';
+    this.group = '[EqualizerRack1_[Channel' + (this.channel + 1) + ']_Effect1]';
+  },
+  unshift: function() {
+    this.inKey = 'pregain';
+    this.group = NumarkDJ2GO2.channels[this.channel];
   }
 });
 
@@ -116,10 +129,6 @@ NumarkDJ2GO2.MiddleKnob.prototype = new components.Pot({
  * Equalizer deck
  */
 NumarkDJ2GO2.EqualizerDeck = function (channel) {
-  this.knob2 = new NumarkDJ2GO2.EqGainKnob(channel, {
-    midi: [0xB0 + channel, 0x16],
-    inKey: 'parameter3'
-  });
   NumarkDJ2GO2.DeckBase.call(this, channel);
 };
 NumarkDJ2GO2.EqualizerDeck.prototype = Object.create(NumarkDJ2GO2.DeckBase.prototype);
@@ -168,16 +177,6 @@ NumarkDJ2GO2.JogWheel.prototype = new components.Encoder({
     }
   }
 });
-
-/**
- * Equalizer gain level knob
- */
-NumarkDJ2GO2.EqGainKnob = function (channel, options) {
-  components.Pot.call(this, options);
-
-  this.group = '[EqualizerRack1_[Channel' + (channel + 1) + ']_Effect1]';
-}
-NumarkDJ2GO2.EqGainKnob.prototype = Object.create(components.Pot.prototype);
 
 /**
  * Simple deck container to track toggling between single instances of
