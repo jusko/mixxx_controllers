@@ -79,6 +79,27 @@ NumarkDJ2GO2.DeckBase = function (channel) {
 };
 NumarkDJ2GO2.DeckBase.prototype = Object.create(components.Deck.prototype);
 
+NumarkDJ2GO2.DeckBase.prototype.shiftable = function(component) {
+  return (component instanceof NumarkDJ2GO2.Fader) ||
+         (component instanceof NumarkDJ2GO2.JogWheel) ||
+         (component instanceof NumarkDJ2GO2.MiddleKnob) ||
+         (component instanceof NumarkDJ2GO2.HighKnob);
+};
+NumarkDJ2GO2.DeckBase.prototype.shift = function() {
+  this.reconnectComponents(function(component) {
+    if (NumarkDJ2GO2.DeckBase.prototype.shiftable(component)) {
+      component.shift();
+    }
+  });
+};
+NumarkDJ2GO2.DeckBase.prototype.unshift = function() {
+  this.reconnectComponents(function(component) {
+    if (NumarkDJ2GO2.DeckBase.prototype.shiftable(component)) {
+      component.unshift();
+    }
+  });
+};
+
 /**
  * Standard deck
  */
@@ -96,13 +117,10 @@ NumarkDJ2GO2.MiddleKnob = function (channel) {
 };
 NumarkDJ2GO2.MiddleKnob.prototype = new components.Pot({
   shift: function() {
-    this.disconnect();
     this.inKey = 'parameter2';
     this.group = '[EqualizerRack1_[Channel' + (this.channel + 1) + ']_Effect1]';
-    this.connect();
   },
   unshift: function() {
-    this.disconnect();
     this.inKey = (this.channel === 0) ? 'gain' : 'headGain';
     this.group = '[Master]';
   }
@@ -215,14 +233,10 @@ NumarkDJ2GO2.Fader = function(channel) {
 }
 NumarkDJ2GO2.Fader.prototype = new components.Pot({
   shift: function() {
-    this.disconnect();
     this.inKey = 'volume';
-    this.connect();
   },
   unshift: function() {
-    this.disconnect();
     this.inKey = 'rate';
-    this.connect();
   }
 });
 
