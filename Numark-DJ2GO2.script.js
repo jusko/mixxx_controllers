@@ -68,6 +68,7 @@ NumarkDJ2GO2.Deck = function (channel) {
       component.group = NumarkDJ2GO2.channels[channel];
     }
   });
+  this.shiftLocked = false;
 };
 NumarkDJ2GO2.Deck.prototype = Object.create(components.Deck.prototype);
 
@@ -82,6 +83,9 @@ NumarkDJ2GO2.Deck.prototype.shiftable = function(component) {
          (component instanceof NumarkDJ2GO2.HighKnob);
 };
 NumarkDJ2GO2.Deck.prototype.shift = function() {
+  if (this.shiftLocked) {
+    return;
+  }
   this.reconnectComponents(function(component) {
     if (NumarkDJ2GO2.Deck.prototype.shiftable(component)) {
       component.shift();
@@ -89,11 +93,18 @@ NumarkDJ2GO2.Deck.prototype.shift = function() {
   });
 };
 NumarkDJ2GO2.Deck.prototype.unshift = function() {
+  if (this.shiftLocked) {
+    return;
+  }
   this.reconnectComponents(function(component) {
     if (NumarkDJ2GO2.Deck.prototype.shiftable(component)) {
       component.unshift();
     }
   });
+};
+
+NumarkDJ2GO2.Deck.prototype.toggleShiftLock = function() {
+  this.shiftLocked = !this.shiftLocked;
 };
 
 /**
@@ -319,15 +330,28 @@ NumarkDJ2GO2.LoadButton = function(channel) {
   components.Button.call(this);
   this.channel = channel;
   this.midi = [0x9F, 0x02 + channel];
+  this.group = NumarkDJ2GO2.channels[this.channel];
+  this.inKey = 'LoadSelectedTrack';
 }
 NumarkDJ2GO2.LoadButton.prototype = new components.Button({
-  shift: function() {
-    NumarkDJ2GO2.decks[0 + this.channel].toggle();
-    NumarkDJ2GO2.setDecks();
+  input: function(channel, control, value, status) {
+    if (this.isShifted) {
+      if (control === 0x02) {
+        NumarkDJ2GO2.leftDeck.toggleShiftLock();
+      }
+      else if (control === 0x03) {
+        NumarkDJ2GO2.rightDeck.toggleShiftLock();
+      }
+    }
+    else {
+      this.inSetValue(this.isPress(channel, control, value, status));
+    }
+  },
+  shift: function () {
+    this.isShifted = true;
   },
   unshift: function() {
-    this.group = NumarkDJ2GO2.channels[this.channel];
-    this.inKey = 'LoadSelectedTrack';
+    this.isShifted = false;
   }
 });
 
