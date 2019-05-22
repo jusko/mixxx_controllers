@@ -7,15 +7,14 @@ var NumarkDJ2GO2 = new Object({
 });
 
 /**
- * Override Pot's connect and disconnect methods to work more smoothly with
- * the way MultiDeck hot swaps components when toggling decks
+ * Override Pot's connect and disconnect methods to work more smoothly 
  */
 components.Pot.prototype.connect = function() {
   engine.softTakeover(this.group, this.inKey, true);
-}
+};
 components.Pot.prototype.disconnect = function() {
   engine.softTakeoverIgnoreNextValue(this.group, this.inKey);
-}
+};
 
 /**
  * Init
@@ -69,6 +68,8 @@ NumarkDJ2GO2.DeckBase = function (channel) {
   this.fader = new NumarkDJ2GO2.Fader(channel);
   this.jogWheel = new NumarkDJ2GO2.JogWheel(channel);
 
+  this.knob1 = new NumarkDJ2GO2.MiddleKnob(channel);
+
   this.reconnectComponents(function (component) {
     if (component.group === undefined) {
       component.group = NumarkDJ2GO2.channels[channel];
@@ -81,12 +82,6 @@ NumarkDJ2GO2.DeckBase.prototype = Object.create(components.Deck.prototype);
  * Standard deck
  */
 NumarkDJ2GO2.StandardDeck = function (channel) {
-  this.knob1 = new components.Pot({
-    midi: [0xBF, (channel === 0 ? 0x0A : 0x0C)],
-    inKey: channel == 0 ? 'gain' : 'headGain',
-    group: '[Master]'
-  });
-
   this.knob2 = new components.Pot({
     midi: [0xB0 + channel, 0x16],
     inKey: 'pregain',
@@ -96,15 +91,31 @@ NumarkDJ2GO2.StandardDeck = function (channel) {
 };
 NumarkDJ2GO2.StandardDeck.prototype = Object.create(NumarkDJ2GO2.DeckBase.prototype);
 
+NumarkDJ2GO2.MiddleKnob = function (channel) {
+  components.Pot.call(this);
+  this.midi = [0xBF, (channel === 0 ? 0x0A : 0x0C)];
+  this.channel = channel;
+  this.inKey = (channel === 0) ? 'gain' : 'headGain';
+};
+NumarkDJ2GO2.MiddleKnob.prototype = new components.Pot({
+  shift: function() {
+    this.disconnect();
+    this.inKey = 'parameter2';
+    this.group = '[EqualizerRack1_[Channel' + (this.channel + 1) + ']_Effect1]';
+    this.connect();
+  },
+  unshift: function() {
+    this.disconnect();
+    this.inKey = (this.channel === 0) ? 'gain' : 'headGain';
+    this.group = '[Master]';
+    this.connect();
+  }
+});
+
 /**
  * Equalizer deck
  */
 NumarkDJ2GO2.EqualizerDeck = function (channel) {
-  this.knob1 = new NumarkDJ2GO2.EqGainKnob(channel, {
-    midi: [0xBF, (channel === 0 ? 0x0A : 0x0C)],
-    inKey: 'parameter2'
-  });
-
   this.knob2 = new NumarkDJ2GO2.EqGainKnob(channel, {
     midi: [0xB0 + channel, 0x16],
     inKey: 'parameter3'
