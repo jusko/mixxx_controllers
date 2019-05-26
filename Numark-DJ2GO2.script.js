@@ -112,7 +112,7 @@ NumarkDJ2GO2.Deck.prototype.toggleShiftLock = function() {
     engine.stopTimer(this.flashPflLightTimer);
     this.flashPflLightTimer = 0;
     val = engine.getValue(NumarkDJ2GO2.channels[this.channel], 'pfl') === 1 ? 0x90 : 0x80;
-    midi.sendShortMsg(val + this.channel, 0x1B, 0x01);
+    engine.beginTimer(250, function() { midi.sendShortMsg(val + this.channel, 0x1B, 0x01); }, true);
     this.shiftLocked = false;
   }
   else {
