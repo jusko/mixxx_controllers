@@ -1,5 +1,4 @@
 var NumarkDJ2GO2 = new Object({
-  shiftMode: false,
   channels: [
     '[Channel1]',
     '[Channel2]'
@@ -205,6 +204,11 @@ NumarkDJ2GO2.JogWheel.prototype = new components.Encoder({
     this.tick = 0.001;
   },
   input: function(channel, control, value) {
+    if (this.inKey === 'playposition' &&
+        engine.getValue(NumarkDJ2GO2.channels[this.channel], 'play') === 1) {
+
+      return;
+    }
     if (value === 0x01) {
       this.inSetParameter(this.inGetParameter() + this.tick);
     }
