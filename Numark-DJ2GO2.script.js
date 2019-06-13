@@ -213,13 +213,26 @@ NumarkDJ2GO2.JogWheel.prototype = new components.Encoder({
     if (this.inKey === 'playposition' &&
         engine.getValue(NumarkDJ2GO2.channels[this.channel], 'play') === 1) {
 
-      return;
+      if (value === 0x01) {
+        engine.setValue(this.group, 'rate_perm_up_small', 1);
+        engine.beginTimer(500, function() {
+          engine.setValue(this.group, 'rate_perm_down_small', 1);
+        }, true);
+      }
+      else if (value === 0x7F) {
+        engine.setValue(this.group, 'rate_perm_down_small', 1);
+        engine.beginTimer(500, function() {
+          engine.setValue(this.group, 'rate_perm_up_small', 1);
+        }, true);
+      }
     }
-    if (value === 0x01) {
-      this.inSetParameter(this.inGetParameter() + this.tick);
-    }
-    else if (value === 0x7F) {
-      this.inSetParameter(this.inGetParameter() - this.tick);
+    else {
+      if (value === 0x01) {
+        this.inSetParameter(this.inGetParameter() + this.tick);
+      }
+      else if (value === 0x7F) {
+        this.inSetParameter(this.inGetParameter() - this.tick);
+      }
     }
   }
 });
