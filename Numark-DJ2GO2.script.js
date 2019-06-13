@@ -50,8 +50,8 @@ NumarkDJ2GO2.Deck = function (channel) {
   components.Deck.call(this, [channel + 1]);
   this.channel = channel;
 
-  this.playButton = new components.PlayButton([0x90 + channel, 0x00]);
-  this.cueButton = new components.CueButton([0x90 + channel, 0x01]);
+  this.playButton = new NumarkDJ2GO2.PlayButton(channel);
+  this.cueButton = new NumarkDJ2GO2.CueButton(channel);
   this.syncButton = new components.SyncButton([0x90 + channel, 0x02]);
   this.hotcues = new NumarkDJ2GO2.HotcueButtonPad(channel);
   this.autoloops = new NumarkDJ2GO2.AutoLoopButtonPad(channel);
@@ -81,13 +81,16 @@ NumarkDJ2GO2.Deck.prototype.shiftable = function(component) {
   return (component instanceof NumarkDJ2GO2.Fader) ||
          (component instanceof NumarkDJ2GO2.JogWheel) ||
          (component instanceof NumarkDJ2GO2.MiddleKnob) ||
-         (component instanceof NumarkDJ2GO2.HighKnob);
+         (component instanceof NumarkDJ2GO2.HighKnob) ||
+         (component instanceof NumarkDJ2GO2.CueButton) ||
+         (component instanceof NumarkDJ2GO2.PlayButton);
 };
 NumarkDJ2GO2.Deck.prototype.shift = function() {
+  this.hotcues.shift();
+
   if (this.shiftLocked) {
     return;
   }
-  this.hotcues.shift();
   this.reconnectComponents(function(component) {
     if (NumarkDJ2GO2.Deck.prototype.shiftable(component)) {
       component.shift();
@@ -95,10 +98,13 @@ NumarkDJ2GO2.Deck.prototype.shift = function() {
   });
 };
 NumarkDJ2GO2.Deck.prototype.unshift = function() {
+  this.hotcues.unshift();
+  this.cueButton.unshift();
+  this.playButton.unshift();
+
   if (this.shiftLocked) {
     return;
   }
-  this.hotcues.unshift();
   this.reconnectComponents(function(component) {
     if (NumarkDJ2GO2.Deck.prototype.shiftable(component)) {
       component.unshift();
@@ -398,5 +404,27 @@ NumarkDJ2GO2.ShiftButton.prototype = new components.Button({
       NumarkDJ2GO2.browser.unshift();
       NumarkDJ2GO2.rightDeck.unshift();
     }
+  }
+});
+
+NumarkDJ2GO2.PlayButton = function(channel) {
+  components.PlayButton.call(this);
+
+  this.midi = [0x90 + channel, 0x00];
+};
+NumarkDJ2GO2.PlayButton.prototype = new components.PlayButton({
+  shift: function () {
+    this.inKey = 'beatjump_32_forward';
+  }
+});
+
+NumarkDJ2GO2.CueButton = function(channel) {
+  components.CueButton.call(this);
+
+  this.midi = [0x90 + channel, 0x01];
+};
+NumarkDJ2GO2.CueButton.prototype = new components.CueButton({
+  shift: function () {
+    this.inKey = 'beatjump_32_backward';
   }
 });
