@@ -238,10 +238,10 @@
                 </options>
             </control>
 
-            <!-- Browse Button -->
+            <!-- Browser -->
             <control>
                 <group>[Master]</group>
-                <key>NumarkDJ2GO2.shiftModeOn</key>
+                <key>NumarkDJ2GO2.browser.shiftButton.input</key>
                 <description>Enter shift mode</description>
                 <status>0x9F</status>
                 <midino>0x06</midino>
@@ -251,7 +251,7 @@
             </control>
             <control>
                 <group>[Master]</group>
-                <key>NumarkDJ2GO2.shiftModeOff</key>
+                <key>NumarkDJ2GO2.browser.shiftButton.input</key>
                 <description>Exit shift mode</description>
                 <status>0x8F</status>
                 <midino>0x06</midino>
@@ -260,11 +260,20 @@
                 </options>
             </control>
 
-            <!-- Load Buttons -->
+            <control>
+                <group>[Library]</group>
+                <key>NumarkDJ2GO2.browser.browseKnob.input</key>
+                <description>Browse up and down</description>
+                <status>0xBF</status>
+                <midino>0x00</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
             <control>
                 <group>[Channel1]</group>
-                <key>NumarkDJ2GO2.leftDeck.loadButton.input</key>
-                <description></description>
+                <key>NumarkDJ2GO2.browser.loadButton1.input</key>
+                <description>Load track to deck 1</description>
                 <status>0x9F</status>
                 <midino>0x02</midino>
                 <options>
@@ -273,8 +282,8 @@
             </control>
             <control>
                 <group>[Channel2]</group>
-                <key>NumarkDJ2GO2.rightDeck.loadButton.input</key>
-                <description></description>
+                <key>NumarkDJ2GO2.browser.loadButton2.input</key>
+                <description>Load track to deck 2</description>
                 <status>0x9F</status>
                 <midino>0x03</midino>
                 <options>
@@ -308,7 +317,7 @@
             <!-- Channel Pitch Faders -->
             <control>
                 <group>[Channel1]</group>
-                <key>NumarkDJ2GO2.leftDeck.slider.input</key>
+                <key>NumarkDJ2GO2.leftDeck.fader.input</key>
                 <description>Playback speed (Channel 1)</description>
                 <status>0xB0</status>
                 <midino>0x09</midino>
@@ -319,7 +328,7 @@
 
             <control>
                 <group>[Channel2]</group>
-                <key>NumarkDJ2GO2.rightDeck.slider.input</key>
+                <key>NumarkDJ2GO2.rightDeck.fader.input</key>
                 <description>Playback speed (Channel 2)</description>
                 <status>0xB1</status>
                 <midino>0x09</midino>

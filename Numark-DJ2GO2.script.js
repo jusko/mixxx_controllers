@@ -1,5 +1,4 @@
 var NumarkDJ2GO2 = new Object({
-  shiftMode: false,
   channels: [
     '[Channel1]',
     '[Channel2]'
@@ -7,31 +6,23 @@ var NumarkDJ2GO2 = new Object({
 });
 
 /**
- * Override Pot's connect and disconnect methods to work more smoothly with
- * the way MultiDeck hot swaps components when toggling decks
+ * Override Pot's connect and disconnect methods to work more smoothly 
  */
 components.Pot.prototype.connect = function() {
-    engine.softTakeover(this.group, this.inKey, true);
-}
+  engine.softTakeover(this.group, this.inKey, true);
+};
 components.Pot.prototype.disconnect = function() {
   engine.softTakeoverIgnoreNextValue(this.group, this.inKey);
-}
+};
 
 /**
  * Init
  */
 NumarkDJ2GO2.init = function (id, debug) {
-  NumarkDJ2GO2.decks = [
-    new NumarkDJ2GO2.MultiDeck(0),
-    new NumarkDJ2GO2.MultiDeck(1)
-  ];
-  NumarkDJ2GO2.setDecks();
+  NumarkDJ2GO2.leftDeck = new NumarkDJ2GO2.Deck(0);
+  NumarkDJ2GO2.rightDeck = new NumarkDJ2GO2.Deck(1);
+  NumarkDJ2GO2.browser = new NumarkDJ2GO2.Browser();
 };
-
-NumarkDJ2GO2.setDecks = function() {
-  NumarkDJ2GO2.leftDeck = NumarkDJ2GO2.decks[0].getDeck();
-  NumarkDJ2GO2.rightDeck = NumarkDJ2GO2.decks[1].getDeck();
-}
 
 /**
  * Shutdown
@@ -52,84 +43,136 @@ NumarkDJ2GO2.shutdown = function (id, debug) {
   }
 };
 
-/*
- * Enable shift mode while the browse button is held down
- */
-NumarkDJ2GO2.shiftModeOn = function () {
-  NumarkDJ2GO2.shiftMode = true;
-  NumarkDJ2GO2.leftDeck.hotcues.shift();
-};
-
-NumarkDJ2GO2.shiftModeOff = function () {
-  NumarkDJ2GO2.shiftMode = false;
-  NumarkDJ2GO2.leftDeck.hotcues.unshift();
-};
-
 /**
- * Core deck controls
+ * Deck
  */
-NumarkDJ2GO2.DeckBase = function (channel) {
+NumarkDJ2GO2.Deck = function (channel) {
   components.Deck.call(this, [channel + 1]);
+  this.channel = channel;
 
-  this.playButton = new components.PlayButton([0x90 + channel, 0x00]);
-  this.cueButton = new components.CueButton([0x90 + channel, 0x01]);
+  this.playButton = new NumarkDJ2GO2.PlayButton(channel);
+  this.cueButton = new NumarkDJ2GO2.CueButton(channel);
   this.syncButton = new components.SyncButton([0x90 + channel, 0x02]);
-  this.loadButton = new NumarkDJ2GO2.LoadButton([0x9F, 0x02 - channel]);
   this.hotcues = new NumarkDJ2GO2.HotcueButtonPad(channel);
   this.autoloops = new NumarkDJ2GO2.AutoLoopButtonPad(channel);
   this.loops = new NumarkDJ2GO2.ManualLoopButtonPad(channel);
+
+  this.fader = new NumarkDJ2GO2.Fader(channel);
+  this.jogWheel = new NumarkDJ2GO2.JogWheel(channel);
+
+  this.knob1 = new NumarkDJ2GO2.MiddleKnob(channel);
+  this.knob2 = new NumarkDJ2GO2.HighKnob(channel);
 
   this.reconnectComponents(function (component) {
     if (component.group === undefined) {
       component.group = NumarkDJ2GO2.channels[channel];
     }
   });
+  this.shiftLocked = false;
+  this.flashPflLightTimer = 0;
 };
-NumarkDJ2GO2.DeckBase.prototype = Object.create(components.Deck.prototype);
+NumarkDJ2GO2.Deck.prototype = Object.create(components.Deck.prototype);
 
 /**
- * Standard deck
+ * Override default shift methods for the container to work better
+ * with our requirements
  */
-NumarkDJ2GO2.StandardDeck = function (channel) {
-  this.slider = new NumarkDJ2GO2.PitchFader(channel);
-
-  this.jogWheel = new NumarkDJ2GO2.JogWheel(channel);
-
-  this.knob1 = new components.Pot({
-    midi: [0xBF, (channel === 0 ? 0x0A : 0x0C)],
-    inKey: channel == 0 ? 'gain' : 'headGain',
-    group: '[Master]'
-  });
-
-  this.knob2 = new components.Pot({
-    midi: [0xB0 + channel, 0x16],
-    inKey: 'pregain',
-    group: NumarkDJ2GO2.channels[channel]
-  });
-  NumarkDJ2GO2.DeckBase.call(this, channel);
+NumarkDJ2GO2.Deck.prototype.shiftable = function(component) {
+  return (component instanceof NumarkDJ2GO2.Fader) ||
+         (component instanceof NumarkDJ2GO2.JogWheel) ||
+         (component instanceof NumarkDJ2GO2.MiddleKnob) ||
+         (component instanceof NumarkDJ2GO2.HighKnob);
 };
-NumarkDJ2GO2.StandardDeck.prototype = Object.create(NumarkDJ2GO2.DeckBase.prototype);
+NumarkDJ2GO2.Deck.prototype.shift = function() {
+  this.hotcues.shift();
+  this.cueButton.shift();
+  this.playButton.shift();
+
+  if (this.shiftLocked) {
+    return;
+  }
+  this.reconnectComponents(function(component) {
+    if (NumarkDJ2GO2.Deck.prototype.shiftable(component)) {
+      component.shift();
+    }
+  });
+};
+NumarkDJ2GO2.Deck.prototype.unshift = function() {
+  this.hotcues.unshift();
+  this.cueButton.unshift();
+  this.playButton.unshift();
+
+  if (this.shiftLocked) {
+    return;
+  }
+  this.reconnectComponents(function(component) {
+    if (NumarkDJ2GO2.Deck.prototype.shiftable(component)) {
+      component.unshift();
+    }
+  });
+};
+
+NumarkDJ2GO2.Deck.prototype.toggleShiftLock = function() {
+  if (this.shiftLocked) {
+    engine.stopTimer(this.flashPflLightTimer);
+    this.flashPflLightTimer = 0;
+    val = engine.getValue(NumarkDJ2GO2.channels[this.channel], 'pfl') === 1 ? 0x90 : 0x80;
+    engine.beginTimer(250, function() { midi.sendShortMsg(val + this.channel, 0x1B, 0x01); }, true);
+    this.shiftLocked = false;
+  }
+  else {
+    this.shiftLocked = true;
+    this.flashPflLightTimer = engine.beginTimer(500, function() {
+        midi.sendShortMsg(0x90 + this.channel, 0x1B, 0x01);
+        engine.beginTimer(250, function() {
+          midi.sendShortMsg(0x80 + this.channel, 0x1B, 0x01);
+        }, true);
+    });
+  }
+};
 
 /**
- * Equalizer deck
+ * Middle Knob
  */
-NumarkDJ2GO2.EqualizerDeck = function (channel) {
-  this.slider = new NumarkDJ2GO2.VolumeFader(channel);
-
-  this.jogWheel = new NumarkDJ2GO2.JogWheelGain(channel, 'parameter1');
-
-  this.knob1 = new NumarkDJ2GO2.EqGainKnob(channel, {
-    midi: [0xBF, (channel === 0 ? 0x0A : 0x0C)],
-    inKey: 'parameter2'
-  });
-
-  this.knob2 = new NumarkDJ2GO2.EqGainKnob(channel, {
-    midi: [0xB0 + channel, 0x16],
-    inKey: 'parameter3'
-  });
-  NumarkDJ2GO2.DeckBase.call(this, channel);
+NumarkDJ2GO2.MiddleKnob = function (channel) {
+  components.Pot.call(this);
+  this.midi = [0xBF, (channel === 0 ? 0x0A : 0x0C)];
+  this.channel = channel;
+  this.inKey = (channel === 0) ? 'gain' : 'headGain';
+  this.group = '[Master]';
 };
-NumarkDJ2GO2.EqualizerDeck.prototype = Object.create(NumarkDJ2GO2.DeckBase.prototype);
+NumarkDJ2GO2.MiddleKnob.prototype = new components.Pot({
+  shift: function() {
+    this.inKey = 'parameter2';
+    this.group = '[EqualizerRack1_[Channel' + (this.channel + 1) + ']_Effect1]';
+  },
+  unshift: function() {
+    this.inKey = (this.channel === 0) ? 'gain' : 'headGain';
+    this.group = '[Master]';
+  }
+});
+
+/**
+ * High Knob
+ */
+NumarkDJ2GO2.HighKnob = function (channel) {
+  components.Pot.call(this);
+  this.channel = channel;
+  this.midi = [0xB0 + channel, 0x16];
+  this.group = NumarkDJ2GO2.channels[channel];
+  this.inKey = 'pregain';
+};
+NumarkDJ2GO2.HighKnob.prototype = new components.Pot({
+  shift: function() {
+    this.inKey = 'parameter3';
+    this.group = '[EqualizerRack1_[Channel' + (this.channel + 1) + ']_Effect1]';
+  },
+  unshift: function() {
+    this.inKey = 'pregain';
+    this.group = NumarkDJ2GO2.channels[this.channel];
+  }
+});
+
 
 /**
  * Headphones/PFL Events 
@@ -148,127 +191,78 @@ NumarkDJ2GO2.headphonesOff = function(channel, control, value, status, group) {
 };
 
 /**
- * Standard jog wheel
+ * Jog wheel
  */
 NumarkDJ2GO2.JogWheel = function (channel) {
   components.Encoder.call(this);
   this.midi = [0xB0 + channel, 0x06];
+  this.channel = channel;
 }
 NumarkDJ2GO2.JogWheel.prototype = new components.Encoder({
-  inKey: 'playposition',
-  input: function(channel, control, value) {
-    var tick = NumarkDJ2GO2.shiftMode ? 0.00025  : 0.01;
-    if (value === 0x01) {
-      this.inSetParameter(this.inGetParameter() + tick);
-    }
-    else if (value === 0x7F) {
-      this.inSetParameter(this.inGetParameter() - tick);
-    }
-  }
-});
-
-/**
- * Jog wheel mapped to a gain level
- */
-NumarkDJ2GO2.JogWheelGain = function (channel, gain) {
-  components.Encoder.call(this);
-
-  this.midi = [0xB0 + channel, 0x06];
-  this.group = '[EqualizerRack1_[Channel' + (channel + 1) + ']_Effect1]';
-  this.inKey = gain;
-}
-NumarkDJ2GO2.JogWheelGain.prototype = new components.Encoder({
-  input: function(channel, control, value) {
-    if (value === 0x01) {
-      this.inSetParameter(this.inGetParameter() + 0.005);
-    }
-    else if (value === 0x7F) {
-      this.inSetParameter(this.inGetParameter() - 0.005);
-    }
-  }
-});
-
-/**
- * Equalizer gain level knob
- */
-NumarkDJ2GO2.EqGainKnob = function (channel, options) {
-  components.Pot.call(this, options);
-
-  this.group = '[EqualizerRack1_[Channel' + (channel + 1) + ']_Effect1]';
-}
-NumarkDJ2GO2.EqGainKnob.prototype = Object.create(components.Pot.prototype);
-
-/**
- * Load button
- */
-NumarkDJ2GO2.LoadButton = function(channel, midi) {
-  components.Button.call(this);
-  this.channel = channel;
-  this.midi = midi;
-  this.group = NumarkDJ2GO2.channels[channel];
-}
-NumarkDJ2GO2.LoadButton.prototype = new components.Button({
-  input: function(__channel, control) {
-    if (NumarkDJ2GO2.shiftMode) {
-      NumarkDJ2GO2.decks[control - 0x02].toggle();
-      NumarkDJ2GO2.setDecks();
-    }
-  }
-});
-
-/**
- * Simple deck container to track toggling between single instances of
- * StandardDeck and EqualizerDeck
- */
-NumarkDJ2GO2.MultiDeck = function(channel) {
-  this.currentDeck = 0;
-  this.decks = [
-    new NumarkDJ2GO2.StandardDeck(channel),
-    new NumarkDJ2GO2.EqualizerDeck(channel)
-  ];
-};
-NumarkDJ2GO2.MultiDeck.prototype = new Object({
-  toggle: function() {
-    this.decks[this.currentDeck].forEachComponent(function(component) {
-      component.disconnect();
-    });
-    this.currentDeck = this.currentDeck === 0 ? 1 : 0;
-    this.decks[this.currentDeck].reconnectComponents();
+  shift: function() {
+    this.group = '[EqualizerRack1_[Channel' + (this.channel + 1) + ']_Effect1]';
+    this.inKey = 'parameter1';
+    this.tick = 0.005;
   },
-  getDeck: function() {
-    return this.decks[this.currentDeck];
+  unshift: function() {
+    this.group = NumarkDJ2GO2.channels[this.channel];
+    this.inKey = 'playposition';
+    this.tick = 0.001;
+  },
+  input: function(channel, control, value) {
+    if (this.inKey === 'playposition' &&
+        engine.getValue(NumarkDJ2GO2.channels[this.channel], 'play') === 1) {
+
+      if (value === 0x01) {
+        engine.setValue(this.group, 'rate_perm_up_small', 1);
+        engine.beginTimer(500, function() {
+          engine.setValue(this.group, 'rate_perm_down_small', 1);
+        }, true);
+      }
+      else if (value === 0x7F) {
+        engine.setValue(this.group, 'rate_perm_down_small', 1);
+        engine.beginTimer(500, function() {
+          engine.setValue(this.group, 'rate_perm_up_small', 1);
+        }, true);
+      }
+    }
+    else {
+      if (value === 0x01) {
+        this.inSetParameter(this.inGetParameter() + this.tick);
+      }
+      else if (value === 0x7F) {
+        this.inSetParameter(this.inGetParameter() - this.tick);
+      }
+    }
   }
 });
 
 /**
- * Base fader class
+ * Fader
  */
 NumarkDJ2GO2.Fader = function(channel) {
   components.Pot.call(this);
   this.midi = [0xB0 + channel, 0x09];
   this.invert = true;
   this.group = NumarkDJ2GO2.channels[channel];
+  this.inKey = 'rate';
 }
-NumarkDJ2GO2.EqGainKnob.prototype = Object.create(components.Pot.prototype);
-
-/**
- * Pitch fader
- */
-NumarkDJ2GO2.PitchFader = function(channel) {
-  NumarkDJ2GO2.Fader.call(this, channel);
-}
-NumarkDJ2GO2.PitchFader.prototype = new components.Pot({
-  inKey: 'rate'
-});
-
-/**
- * Volume fader
- */
-NumarkDJ2GO2.VolumeFader = function(channel) {
-  NumarkDJ2GO2.Fader.call(this, channel);
-}
-NumarkDJ2GO2.VolumeFader.prototype = new components.Pot({
-  inKey: 'volume'
+NumarkDJ2GO2.Fader.prototype = new components.Pot({
+  shift: function() {
+    this.inKey = 'volume';
+  },
+  unshift: function() {
+    this.inKey = 'rate';
+  },
+  inValueScale: function(value) {
+    step = this.inKey === 'rate' ? 0.008 : 0.01;
+    half = 64;
+    if (value >= half) {
+      return 0.5 + ((value - half) * step)
+    } else {
+      return 0.5 - ((half - value) * step)
+    }
+  }
 });
 
 /**
@@ -348,3 +342,111 @@ NumarkDJ2GO2.ManualLoopButtonPad = function(channel) {
   });
 };
 NumarkDJ2GO2.AutoLoopButtonPad.prototype = Object.create(components.ComponentContainer.prototype);
+
+/**
+ * Browser
+ */
+NumarkDJ2GO2.Browser = function() {
+  components.ComponentContainer.call(this);
+
+  this.browseKnob = new components.Encoder({
+    midi: [0xBF, 0x00],
+    group: '[Library]',
+    key: 'MoveVertical',
+    shift: function() {
+      this.inKey = 'MoveFocus';
+    },
+    unshift: function() {
+      this.inKey = 'MoveVertical';
+    },
+    input: function(channel, control, value) {
+      if (value === 0x01) {
+        this.inSetParameter(1);
+      }
+      else if (value === 0x7F) {
+        this.inSetParameter(-1);
+      }
+    }
+  });
+  this.loadButton1 = new NumarkDJ2GO2.LoadButton(0);
+  this.loadButton2 = new NumarkDJ2GO2.LoadButton(1);
+  this.shiftButton = new NumarkDJ2GO2.ShiftButton();
+}
+NumarkDJ2GO2.Browser.prototype = Object.create(components.ComponentContainer.prototype);
+
+/**
+ * Load buttons for for browsing and loading tracks
+ */
+NumarkDJ2GO2.LoadButton = function(channel) {
+  components.Button.call(this);
+  this.channel = channel;
+  this.midi = [0x9F, 0x02 + channel];
+  this.group = NumarkDJ2GO2.channels[this.channel];
+  this.inKey = 'LoadSelectedTrack';
+}
+NumarkDJ2GO2.LoadButton.prototype = new components.Button({
+  input: function(channel, control, value, status) {
+    if (this.isShifted) {
+      if (control === 0x02) {
+        NumarkDJ2GO2.leftDeck.toggleShiftLock();
+      }
+      else if (control === 0x03) {
+        NumarkDJ2GO2.rightDeck.toggleShiftLock();
+      }
+    }
+    else {
+      this.inSetValue(this.isPress(channel, control, value, status));
+    }
+  },
+  shift: function () {
+    this.isShifted = true;
+  },
+  unshift: function() {
+    this.isShifted = false;
+  }
+});
+
+/**
+ * Shift functionality when browse button pressed
+ */
+NumarkDJ2GO2.ShiftButton = function() {
+  components.Button.call(this);
+
+  this.midi = [0x9F, 0x06];
+};
+NumarkDJ2GO2.ShiftButton.prototype = new components.Button({
+  input: function(channel, control, value, status) {
+    if (this.isPress(channel, control, value, status)) {
+      NumarkDJ2GO2.leftDeck.shift();
+      NumarkDJ2GO2.browser.shift();
+      NumarkDJ2GO2.rightDeck.shift();
+    }
+    else {
+      NumarkDJ2GO2.leftDeck.unshift();
+      NumarkDJ2GO2.browser.unshift();
+      NumarkDJ2GO2.rightDeck.unshift();
+    }
+  }
+});
+
+NumarkDJ2GO2.PlayButton = function(channel) {
+  components.PlayButton.call(this);
+
+  this.midi = [0x90 + channel, 0x00];
+};
+NumarkDJ2GO2.PlayButton.prototype = new components.PlayButton({
+  shift: function () {
+    this.inKey = 'beatjump_32_forward';
+  }
+});
+
+NumarkDJ2GO2.CueButton = function(channel) {
+  components.CueButton.call(this);
+
+  this.midi = [0x90 + channel, 0x01];
+};
+NumarkDJ2GO2.CueButton.prototype = new components.CueButton({
+  shift: function () {
+    this.inKey = 'beatjump_32_backward';
+  }
+});
