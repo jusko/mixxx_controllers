@@ -253,6 +253,15 @@ NumarkDJ2GO2.Fader.prototype = new components.Pot({
   },
   unshift: function() {
     this.inKey = 'rate';
+  },
+  inValueScale: function(value) {
+    step = this.inKey === 'rate' ? 0.008 : 0.01;
+    half = 64;
+    if (value >= half) {
+      return 0.5 + ((value - half) * step)
+    } else {
+      return 0.5 - ((half - value) * step)
+    }
   }
 });
 
