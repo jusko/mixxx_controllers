@@ -586,11 +586,77 @@
                 </options>
             </control>
             <control>
-                <group>[Channel1]</group>
+                <group>[Channel2]</group>
                 <key>NumarkDJ2GO2.rightDeck.loops.button4.input</key>
                 <description>Goto loop in</description>
                 <status>0x95</status>
                 <midino>0x24</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
+
+            <!-- FX Button 1 -->
+            <control>
+                <group>[EffectRack1_EffectUnit1_Effect1]</group>
+                <key>NumarkDJ2GO2.leftDeck.fx.buttons[0].input</key>
+                <description>FX 1</description>
+                <status>0x94</status>
+                <midino>0x31</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
+            <control>
+                <group>[EffectRack1_EffectUnit2_Effect1]</group>
+                <key>NumarkDJ2GO2.rightDeck.fx.buttons[0].input</key>
+                <description>FX 1</description>
+                <status>0x95</status>
+                <midino>0x31</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
+
+            <!-- FX Button 2 -->
+            <control>
+                <group>[EffectRack1_EffectUnit1_Effect2]</group>
+                <key>NumarkDJ2GO2.leftDeck.fx.buttons[1].input</key>
+                <description>FX 2</description>
+                <status>0x94</status>
+                <midino>0x32</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
+            <control>
+                <group>[EffectRack1_EffectUnit2_Effect2]</group>
+                <key>NumarkDJ2GO2.rightDeck.fx.buttons[1].input</key>
+                <description>FX 2</description>
+                <status>0x95</status>
+                <midino>0x32</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
+
+            <!-- FX Button 3 -->
+            <control>
+                <group>[EffectRack1_EffectUnit1_Effect3]</group>
+                <key>NumarkDJ2GO2.leftDeck.fx.buttons[2].input</key>
+                <description>FX 3</description>
+                <status>0x94</status>
+                <midino>0x33</midino>
+                <options>
+                    <Script-Binding/>
+                </options>
+            </control>
+            <control>
+                <group>[EffectRack1_EffectUnit2_Effect3]</group>
+                <key>NumarkDJ2GO2.rightDeck.fx.buttons[2].input</key>
+                <description>FX 3</description>
+                <status>0x95</status>
+                <midino>0x33</midino>
                 <options>
                     <Script-Binding/>
                 </options>

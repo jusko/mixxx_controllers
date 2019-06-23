@@ -56,6 +56,7 @@ NumarkDJ2GO2.Deck = function (channel) {
   this.hotcues = new NumarkDJ2GO2.HotcueButtonPad(channel);
   this.autoloops = new NumarkDJ2GO2.AutoLoopButtonPad(channel);
   this.loops = new NumarkDJ2GO2.ManualLoopButtonPad(channel);
+  this.fx = new NumarkDJ2GO2.FXButtonPad(channel);
 
   this.fader = new NumarkDJ2GO2.Fader(channel);
   this.jogWheel = new NumarkDJ2GO2.JogWheel(channel);
@@ -344,6 +345,24 @@ NumarkDJ2GO2.ManualLoopButtonPad = function(channel) {
 NumarkDJ2GO2.AutoLoopButtonPad.prototype = Object.create(components.ComponentContainer.prototype);
 
 /**
+ * FX Toggle Buttons
+ */
+NumarkDJ2GO2.FXButtonPad = function(channel) {
+  NumarkDJ2GO2.ButtonPad.call(this, channel, function(channel, number) {
+    if (number === 4) {
+      return;
+    }
+    return new components.Button({
+      type: components.Button.prototype.types.toggle,
+      midi: [0x94 + channel, 0x30 + number],
+      group: '[EffectRack1_EffectUnit' + (1 + channel) + '_Effect' + number + ']',
+      key: 'enabled'
+    });
+  });
+}
+NumarkDJ2GO2.FXButtonPad.prototype = Object.create(NumarkDJ2GO2.ButtonPad.prototype);
+
+/**
  * Browser
  */
 NumarkDJ2GO2.Browser = function() {
@@ -360,11 +379,35 @@ NumarkDJ2GO2.Browser = function() {
       this.inKey = 'MoveVertical';
     },
     input: function(channel, control, value) {
+      var noFX = true;
+
       if (value === 0x01) {
-        this.inSetParameter(1);
+        for (var i = 1; i <= 2; i++) {
+          for (var j = 1; j <= 3; j++) {
+            if (engine.getValue('[EffectRack1_EffectUnit' + i + '_Effect' + j + ']', 'enabled') === 1) {
+              val = engine.getValue('[EffectRack1_EffectUnit' + i + '_Effect' + j + ']', 'meta');
+              engine.setValue('[EffectRack1_EffectUnit' + i + '_Effect' + j + ']', 'meta', val + 0.055);
+              noFX = false;
+            }
+          }
+        }
+        if (noFX) {
+          this.inSetParameter(1);
+        }
       }
       else if (value === 0x7F) {
-        this.inSetParameter(-1);
+        for (var i = 1; i <= 2; i++) {
+          for (var j = 1; j <= 3; j++) {
+            if (engine.getValue('[EffectRack1_EffectUnit' + i + '_Effect' + j + ']', 'enabled') === 1) {
+              val = engine.getValue('[EffectRack1_EffectUnit' + i + '_Effect' + j + ']', 'meta');
+              engine.setValue('[EffectRack1_EffectUnit' + i + '_Effect' + j + ']', 'meta', val - 0.055);
+              noFX = false;
+            }
+          }
+        }
+        if (noFX) {
+          this.inSetParameter(-1);
+        }
       }
     }
   });
