@@ -349,14 +349,14 @@ NumarkDJ2GO2.AutoLoopButtonPad.prototype = Object.create(components.ComponentCon
  */
 NumarkDJ2GO2.FXButtonPad = function(channel) {
   NumarkDJ2GO2.ButtonPad.call(this, channel, function(channel, number) {
-    if (number === 4) {
-      return;
-    }
+    group = number === 4 ? NumarkDJ2GO2.channels[channel] : '[EffectRack1_EffectUnit' + (1 + channel) + '_Effect' + number + ']';
+    key   = number === 4 ? 'quantize' : 'enabled';
+
     return new components.Button({
       type: components.Button.prototype.types.toggle,
       midi: [0x94 + channel, 0x30 + number],
-      group: '[EffectRack1_EffectUnit' + (1 + channel) + '_Effect' + number + ']',
-      key: 'enabled'
+      group: group,
+      key: key
     });
   });
 }
