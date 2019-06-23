@@ -81,12 +81,12 @@ NumarkDJ2GO2.Deck.prototype.shiftable = function(component) {
   return (component instanceof NumarkDJ2GO2.Fader) ||
          (component instanceof NumarkDJ2GO2.JogWheel) ||
          (component instanceof NumarkDJ2GO2.MiddleKnob) ||
-         (component instanceof NumarkDJ2GO2.HighKnob) ||
-         (component instanceof NumarkDJ2GO2.CueButton) ||
-         (component instanceof NumarkDJ2GO2.PlayButton);
+         (component instanceof NumarkDJ2GO2.HighKnob);
 };
 NumarkDJ2GO2.Deck.prototype.shift = function() {
   this.hotcues.shift();
+  this.cueButton.shift();
+  this.playButton.shift();
 
   if (this.shiftLocked) {
     return;
