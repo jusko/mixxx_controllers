@@ -596,10 +596,10 @@
                 </options>
             </control>
 
-            <!-- FX Button 1 -->
+            <!-- FX/Samples Button 1 -->
             <control>
                 <group>[EffectRack1_EffectUnit1_Effect1]</group>
-                <key>NumarkDJ2GO2.leftDeck.fx.buttons[0].input</key>
+                <key>NumarkDJ2GO2.leftDeck.fxSamples.buttons[0].input</key>
                 <description>FX 1</description>
                 <status>0x94</status>
                 <midino>0x31</midino>
@@ -609,7 +609,7 @@
             </control>
             <control>
                 <group>[EffectRack1_EffectUnit2_Effect1]</group>
-                <key>NumarkDJ2GO2.rightDeck.fx.buttons[0].input</key>
+                <key>NumarkDJ2GO2.rightDeck.fxSamples.buttons[0].input</key>
                 <description>FX 1</description>
                 <status>0x95</status>
                 <midino>0x31</midino>
@@ -618,10 +618,10 @@
                 </options>
             </control>
 
-            <!-- FX Button 2 -->
+            <!-- FX/Samples Button 2 -->
             <control>
                 <group>[EffectRack1_EffectUnit1_Effect2]</group>
-                <key>NumarkDJ2GO2.leftDeck.fx.buttons[1].input</key>
+                <key>NumarkDJ2GO2.leftDeck.fxSamples.buttons[1].input</key>
                 <description>FX 2</description>
                 <status>0x94</status>
                 <midino>0x32</midino>
@@ -631,7 +631,7 @@
             </control>
             <control>
                 <group>[EffectRack1_EffectUnit2_Effect2]</group>
-                <key>NumarkDJ2GO2.rightDeck.fx.buttons[1].input</key>
+                <key>NumarkDJ2GO2.rightDeck.fxSamples.buttons[1].input</key>
                 <description>FX 2</description>
                 <status>0x95</status>
                 <midino>0x32</midino>
@@ -640,10 +640,10 @@
                 </options>
             </control>
 
-            <!-- FX Button 3 -->
+            <!-- FX/Samples Button 3 -->
             <control>
                 <group>[EffectRack1_EffectUnit1_Effect3]</group>
-                <key>NumarkDJ2GO2.leftDeck.fx.buttons[2].input</key>
+                <key>NumarkDJ2GO2.leftDeck.fxSamples.buttons[2].input</key>
                 <description>FX 3</description>
                 <status>0x94</status>
                 <midino>0x33</midino>
@@ -653,7 +653,7 @@
             </control>
             <control>
                 <group>[EffectRack1_EffectUnit2_Effect3]</group>
-                <key>NumarkDJ2GO2.rightDeck.fx.buttons[2].input</key>
+                <key>NumarkDJ2GO2.rightDeck.fxSamples.buttons[2].input</key>
                 <description>FX 3</description>
                 <status>0x95</status>
                 <midino>0x33</midino>
@@ -662,10 +662,10 @@
                 </options>
             </control>
 
-            <!-- FX Button 4 (toggle quantize) -->
+            <!-- FX/Samples Button 4 (FX toggles quantize) -->
             <control>
                 <group>[Channel1]</group>
-                <key>NumarkDJ2GO2.leftDeck.fx.buttons[3].input</key>
+                <key>NumarkDJ2GO2.leftDeck.fxSamples.buttons[3].input</key>
                 <description>Channel 1: Toggle quantize</description>
                 <status>0x94</status>
                 <midino>0x34</midino>
@@ -675,7 +675,7 @@
             </control>
             <control>
                 <group>[Channel2]</group>
-                <key>NumarkDJ2GO2.rightDeck.fx.buttons[3].input</key>
+                <key>NumarkDJ2GO2.rightDeck.fxSamples.buttons[3].input</key>
                 <description>Channel 2: Toggle quantize</description>
                 <status>0x95</status>
                 <midino>0x34</midino>

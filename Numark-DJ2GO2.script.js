@@ -56,7 +56,7 @@ NumarkDJ2GO2.Deck = function (channel) {
   this.hotcues = new NumarkDJ2GO2.HotcueButtonPad(channel);
   this.autoloops = new NumarkDJ2GO2.AutoLoopButtonPad(channel);
   this.loops = new NumarkDJ2GO2.ManualLoopButtonPad(channel);
-  this.fx = new NumarkDJ2GO2.FXButtonPad(channel);
+  this.fxSamples = new NumarkDJ2GO2.FxSampleButtonPad(channel);
 
   this.fader = new NumarkDJ2GO2.Fader(channel);
   this.jogWheel = new NumarkDJ2GO2.JogWheel(channel);
@@ -86,6 +86,7 @@ NumarkDJ2GO2.Deck.prototype.shiftable = function(component) {
 };
 NumarkDJ2GO2.Deck.prototype.shift = function() {
   this.hotcues.shift();
+  this.fxSamples.shift();
   this.cueButton.shift();
   this.playButton.shift();
 
@@ -106,6 +107,8 @@ NumarkDJ2GO2.Deck.prototype.unshift = function() {
   if (this.shiftLocked) {
     return;
   }
+  this.fxSamples.unshift();
+
   this.reconnectComponents(function(component) {
     if (NumarkDJ2GO2.Deck.prototype.shiftable(component)) {
       component.unshift();
@@ -347,20 +350,27 @@ NumarkDJ2GO2.AutoLoopButtonPad.prototype = Object.create(components.ComponentCon
 /**
  * FX Toggle Buttons
  */
-NumarkDJ2GO2.FXButtonPad = function(channel) {
+NumarkDJ2GO2.FxSampleButtonPad = function(channel) {
   NumarkDJ2GO2.ButtonPad.call(this, channel, function(channel, number) {
-    group = number === 4 ? NumarkDJ2GO2.channels[channel] : '[EffectRack1_EffectUnit' + (1 + channel) + '_Effect' + number + ']';
-    key   = number === 4 ? 'quantize' : 'enabled';
-
     return new components.Button({
-      type: components.Button.prototype.types.toggle,
       midi: [0x94 + channel, 0x30 + number],
-      group: group,
-      key: key
+      number: number,
+      channel: channel,
+      shift: function() {
+        this.group = this.number === 4 ? NumarkDJ2GO2.channels[channel] : '[EffectRack1_EffectUnit' + (1 + this.channel) + '_Effect' + this.number + ']';
+        this.inKey = this.outKey = this.number === 4 ? 'quantize' : 'enabled';
+        this.type = components.Button.prototype.types.toggle;
+      },
+      unshift: function() {
+        this.group = '[Sampler' + (channel === 0 ? number : 4 + number) + ']';
+        this.inKey = 'cue_gotoandplay';
+        this.outKey = 'play_indicator';
+        this.type = components.Button.prototype.types.push
+      }
     });
   });
 }
-NumarkDJ2GO2.FXButtonPad.prototype = Object.create(NumarkDJ2GO2.ButtonPad.prototype);
+NumarkDJ2GO2.FxSampleButtonPad.prototype = Object.create(NumarkDJ2GO2.ButtonPad.prototype);
 
 /**
  * Browser
